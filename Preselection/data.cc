@@ -3,7 +3,7 @@
 #include <fstream>
 #include <exception>
 #include "config.h"
-#include "experiment_conv.h"
+#include "Experiment/experiment_conv.h"
 #include "data.h"
 #include "reconstruction.h"
 using namespace std;

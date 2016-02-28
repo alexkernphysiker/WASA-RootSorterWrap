@@ -1,1 +1,1 @@
-../../lib/FitGen/include/Genetic/paramfunc.h
+../../WASA-libs/FitGen/include/Genetic/paramfunc.h

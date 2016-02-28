@@ -17,7 +17,7 @@
 #include <CDTracksSimple.hh>
 #include "math_h/error.h"
 #include "trackprocessing.h"
-#include "../config.h"
+#include "Experiment/config.h"
 namespace TrackAnalyse{
 	using namespace std;
 	using namespace MathTemplates;

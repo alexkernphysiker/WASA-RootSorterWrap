@@ -1,1 +1,1 @@
-../../lib/FitGen/src/paramset.cpp
+../../WASA-libs/FitGen/src/paramset.cpp

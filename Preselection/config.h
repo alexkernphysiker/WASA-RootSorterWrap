@@ -3,7 +3,7 @@
 #ifndef DIQFUKBJVSPNWOVE
 #define DIQFUKBJVSPNWOVE
 #include <string>
-#include "../config.h"
+#include "Experiment/config.h"
 #include "log.h"
 #include "analysismodule.hh"
 void SetAnalysisType(std::string type);

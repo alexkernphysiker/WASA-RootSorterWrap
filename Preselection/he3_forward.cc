@@ -2,9 +2,9 @@
 // MIT license
 #include <Wasa.hh>
 #include <TCutG.h>
-#include "reconstruction_types.h"
-#include "experiment_conv.h"
-#include "Theory/reactions.h"
+#include "ReconstructionFit/reconstruction_types.h"
+#include "Experiment/experiment_conv.h"
+#include "Kinematics/reactions.h"
 #include "trackprocessing.h"
 #include "detectors.h"
 #include "reconstruction.h"
