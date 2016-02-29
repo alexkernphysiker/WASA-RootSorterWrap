@@ -211,7 +211,7 @@ namespace TrackAnalyse{
 		EventProcess(){}
 		~EventProcess(){}
 		EventProcess&operator<<(shared_ptr<ITrackParamProcess>element);
-		void Process()const;
+		bool Process()const;
 	private:
 		vector<shared_ptr<ITrackParamProcess>> m_proc;
 	};

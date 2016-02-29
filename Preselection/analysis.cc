@@ -28,9 +28,15 @@ TrackAnalyse::TrackProcess& Analysis::TrackTypeProcess(TrackType type){
 			return rec.second;
 	throw MathTemplates::Exception<Analysis>("Cannot find track type");
 }
-TrackAnalyse::EventProcess& Analysis::EventProcessing(){
-	return m_eventproc;
+TrackAnalyse::EventProcess& Analysis::EventPreProcessing(){return m_pre_event_proc;}
+TrackAnalyse::EventProcess& Analysis::EventPostProcessing(){return m_post_event_proc;}
+
+const vector< vector< double > >& Analysis::EventData() const{return m_event_data;}
+void Analysis::AddEventData(const initializer_list<double>& data){
+	m_event_data.push_back(vector<double>());
+	for(double p:data)m_event_data[m_event_data.size()-1].push_back(p);
 }
+
 
 bool Analysis::Trigger(int n)const{
 	return DataSpecificTriggerCheck(n);
@@ -40,18 +46,23 @@ void Analysis::ProcessEvent(){
 	if(m_count%1000==0)
 		Log(NoLog)<<to_string(m_count)+" events";
 	SubLog log=Log(LogDebug);
-	if(DataTypeSpecificEventAnalysis())
-		m_eventproc.Process();
-		for(const TrackTypeRec& tt:m_chain){
-			vector<WTrackBank*> BANK;
-			BANK.push_back(fTrackBankCD);
-			BANK.push_back(fTrackBankFD);
-			for(WTrackBank*bank:BANK){
-				WTrackIter iterator(bank);
-				while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
-					if(track->Type()==tt.first)tt.second.Process(*track);
+	if(DataTypeSpecificEventAnalysis()){
+		m_event_data.clear();
+		if(m_pre_event_proc.Process()){
+			for(const TrackTypeRec& tt:m_chain){
+				vector<WTrackBank*> BANK;
+				BANK.push_back(fTrackBankCD);
+				BANK.push_back(fTrackBankFD);
+				for(WTrackBank*bank:BANK){
+					WTrackIter iterator(bank);
+					while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
+						if(track->Type()==tt.first)tt.second.Process(*track);
+				}
 			}
+			m_post_event_proc.Process();
 		}
+		m_event_data.clear();
+	}
 }
 
 ///BEAM MOMENTUM

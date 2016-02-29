@@ -233,10 +233,12 @@ namespace TrackAnalyse{
 			throw Exception<EventProcess>("Cannot add process to container");
 		return ch;
 	}
-	void EventProcess::Process() const{
+	bool EventProcess::Process() const{
 		WTrack T;
 		vector<double> P;
 		for(auto proc:m_proc)
-			proc->Process(T,P);
+			if(!proc->Process(T,P))
+				return false;
+		return true;
 	}
 }
