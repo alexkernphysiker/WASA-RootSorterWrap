@@ -5,7 +5,7 @@
 #include "analysis.h"
 namespace ReactionSetup{
 	enum He3Modification{forData,forEta,forPi0};
-	Analysis* He3_forward_analyse(He3Modification);
-	Analysis* He3_forward_reconstruction(He3Modification);
+	Analysis* He3_X_analyse(He3Modification);
+	Analysis* He3_X_reconstruction(He3Modification);
 }
 #endif 
