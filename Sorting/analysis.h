@@ -43,11 +43,6 @@ private:
 	TrackTypeRecs m_chain;
 	TrackAnalyse::EventProcess m_pre_event_proc,m_post_event_proc;
 public:
-	const vector<vector<double>>& EventData()const;
-	void AddEventData(const initializer_list<double>&data);
-private:
-	vector<vector<double>> m_event_data;
-public:
 	struct Kinematic{Kinematic();double E,Th,Phi;};
 	const Kinematic&FromFirstVertex(ParticleType type)const;
 	double PBeam()const;

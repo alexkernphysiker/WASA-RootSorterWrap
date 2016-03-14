@@ -31,13 +31,6 @@ TrackAnalyse::TrackProcess& Analysis::TrackTypeProcess(TrackType type){
 TrackAnalyse::EventProcess& Analysis::EventPreProcessing(){return m_pre_event_proc;}
 TrackAnalyse::EventProcess& Analysis::EventPostProcessing(){return m_post_event_proc;}
 
-const vector< vector< double > >& Analysis::EventData() const{return m_event_data;}
-void Analysis::AddEventData(const initializer_list<double>& data){
-	m_event_data.push_back(vector<double>());
-	for(double p:data)m_event_data[m_event_data.size()-1].push_back(p);
-}
-
-
 bool Analysis::Trigger(int n)const{
 	return DataSpecificTriggerCheck(n);
 }
@@ -47,7 +40,6 @@ void Analysis::ProcessEvent(){
 		Log(NoLog)<<to_string(m_count)+" events";
 	SubLog log=Log(LogDebug);
 	if(DataTypeSpecificEventAnalysis()){
-		m_event_data.clear();
 		if(m_pre_event_proc.Process()){
 			for(const TrackTypeRec& tt:m_chain){
 				vector<WTrackBank*> BANK;
@@ -61,7 +53,6 @@ void Analysis::ProcessEvent(){
 			}
 			m_post_event_proc.Process();
 		}
-		m_event_data.clear();
 	}
 }
 
