@@ -48,7 +48,7 @@ namespace ReactionSetup{
 	Axis Th_deg([](const vector<double>&P)->double{return P[0];},3.5,9.0,550);
 	Axis Phi_deg([](const vector<double>&P)->double{return P[1];},0.0,360.0,360);
 	Axis Ek_GeV([](const vector<double>&P)->double{return P[2];},0.1,0.6,500);
-	Axis MM_GeV([](const vector<double>&P)->double{return P[3];},Particle::eta().mass()-0.02,Particle::eta().mass()+0.02,40);
+	Axis MM_GeV([](const vector<double>&P)->double{return P[3];},0.0,0.8,800);
 	shared_ptr<AbstractChain> ReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dirname(),"1-AllTracks")
@@ -130,138 +130,6 @@ namespace ReactionSetup{
 		})
 		<<make_shared<SetOfHists1D>(dirname(),"MissingMass",Q_axis(data),MM_GeV);
 	}
-	shared_ptr<AbstractChain> He3Eta_kin_cut(const Analysis&data){
-		return make_shared<ChainCheck>()
-			<<(make_shared<ChainBinner>(Q_axis(data))
-				<<[]()->bool{return false;}//0
-				<<[]()->bool{return false;}//1
-				<<[]()->bool{return false;}//2
-				<<[]()->bool{return false;}//3
-				<<[]()->bool{return false;}//4
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut5",5);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1,0.279,5.446);
-						cut->SetPoint(2,0.279,5.217);
-						cut->SetPoint(3,0.323,5.217);
-						cut->SetPoint(4,0.323,5.446);
-						cut->SetPoint(5,0.279,5.446);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//5
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut6",5);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1,0.264,5.217);
-						cut->SetPoint(2,0.336,5.217);
-						cut->SetPoint(3,0.310,5.962);
-						cut->SetPoint(4,0.290,5.962);
-						cut->SetPoint(5,0.264,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//6
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut7",7);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1,0.263,5.217);
-						cut->SetPoint(2,0.342,5.217);
-						cut->SetPoint(3,0.332,5.962);
-						cut->SetPoint(4,0.311,6.420);
-						cut->SetPoint(5,0.286,6.420);
-						cut->SetPoint(6,0.273,5.962);
-						cut->SetPoint(7,0.263,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//7
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut8",10);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1 ,0.259,5.217);
-						cut->SetPoint(2 ,0.282,5.217);
-						cut->SetPoint(3 ,0.303,5.618);
-						cut->SetPoint(4 ,0.322,5.217);
-						cut->SetPoint(5 ,0.354,5.217);
-						cut->SetPoint(6 ,0.338,6.134);
-						cut->SetPoint(7 ,0.317,6.592);
-						cut->SetPoint(8 ,0.291,6.592);
-						cut->SetPoint(9 ,0.267,6.134);
-						cut->SetPoint(10,0.259,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//8
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut9",10);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1 ,0.252,5.217);
-						cut->SetPoint(2 ,0.278,5.217);
-						cut->SetPoint(3 ,0.302,5.790);
-						cut->SetPoint(4 ,0.329,5.217);
-						cut->SetPoint(5 ,0.362,5.217);
-						cut->SetPoint(6 ,0.349,6.306);
-						cut->SetPoint(7 ,0.320,6.879);
-						cut->SetPoint(8 ,0.286,6.879);
-						cut->SetPoint(9 ,0.263,6.306);
-						cut->SetPoint(10,0.252,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//9
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut10",10);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1 ,0.249,5.217);
-						cut->SetPoint(2 ,0.270,5.217);
-						cut->SetPoint(3 ,0.304,6.191);
-						cut->SetPoint(4 ,0.339,5.217);
-						cut->SetPoint(5 ,0.368,5.217);
-						cut->SetPoint(6 ,0.353,6.535);
-						cut->SetPoint(7 ,0.318,7.166);
-						cut->SetPoint(8 ,0.293,7.166);
-						cut->SetPoint(9 ,0.263,6.535);
-						cut->SetPoint(10,0.249,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//10
-				<<[](WTrack&T,const vector<double>&P)->bool{
-					static TCutG *cut=nullptr;
-					if(cut==nullptr){
-						cut=new TCutG("kincut11",11);
-						cut->SetVarX("Ek");
-						cut->SetVarY("Theta");
-						cut->SetPoint(1 ,0.248,5.217);
-						cut->SetPoint(2 ,0.268,5.217);
-						cut->SetPoint(3 ,0.304,6.306);
-						cut->SetPoint(4 ,0.343,5.217);
-						cut->SetPoint(5 ,0.379,5.217);
-						cut->SetPoint(6 ,0.365,6.535);
-						cut->SetPoint(7 ,0.320,7.452);
-						cut->SetPoint(8 ,0.292,7.452);
-						cut->SetPoint(9 ,0.253,6.535);
-						cut->SetPoint(10,0.248,5.217);
-					}
-					return cut->IsInside(Ek_GeV(T,P),Th_deg(T,P));
-				}//11
-			)
-			<<Forward::Get().CreateMarker(dirname(),"5-Kinematic cut")
-			<<make_shared<Hist1D>(dirname(),"5-Kinematic cut",Q_axis(data));
-	}
 	shared_ptr<AbstractChain> KinematicHe3Test(const Analysis&data,bool MC,string&&opt_name="reconstructed"){
 		auto res=make_shared<Chain>()<<make_shared<SetOfHists2D>(dirname(),string("Kinematic-")+opt_name,Q_axis(data),Ek_GeV,Th_deg);
 		if(MC){
@@ -278,7 +146,6 @@ namespace ReactionSetup{
 		if(forData==mode)res->EventPreProcessing()<<[res](){return res->Trigger(trigger_he3_forward.number);};
 		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()
 			<<ReconstructionProcess(*res)
-			<<KinematicHe3Test(*res,false,"before-cut")<<He3Eta_kin_cut(*res)
 			<<MissingMass(*res)<<KinematicHe3Test(*res,mode==forEta)
 		);
 		return res;
