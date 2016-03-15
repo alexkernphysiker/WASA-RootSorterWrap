@@ -50,7 +50,7 @@ AnalysisModule::~AnalysisModule(){
 void AnalysisModule::ProcessEvent(){
 	if (fProcessed) return;
 	fProcessed = kTRUE;
-	((IAnalysis*)m_data)->ProcessEvent();
+	m_data->ProcessEvent();
 }
 void AnalysisModule::Clear(Option_t *option){fProcessed=kFALSE;}
 void AnalysisModule::Print(Option_t *option){}

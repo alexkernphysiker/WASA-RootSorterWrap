@@ -26,14 +26,14 @@ enum ParticleType{
 	kDummy=0,kGamma=1,kElectron=2,kPositron=3,kPi0=7,kPiPlus=8,kPiMinus=9,
 	kNeutron=13,kProton=14,kEta=17,kDeuteron=45,kTriton=46,kHe3=49
 };
-class Analysis:public virtual IAnalysis,public virtual Logger{
+class Analysis:public virtual Logger{
 protected:
 	Analysis();
 public:
 	virtual ~Analysis();
-	virtual void ProcessEvent()override;
+	void ProcessEvent();
 
-	TrackAnalyse::TrackProcess&TrackTypeProcess(TrackType);
+	TrackAnalyse::TrackProcess&TrackTypeProcess(const TrackType);
 	TrackAnalyse::EventProcess&EventPreProcessing();
 	TrackAnalyse::EventProcess&EventPostProcessing();
 	bool Trigger(int n)const;
@@ -44,9 +44,9 @@ private:
 	TrackAnalyse::EventProcess m_pre_event_proc,m_post_event_proc;
 public:
 	struct Kinematic{Kinematic();double E,Th,Phi;};
-	const Kinematic&FromFirstVertex(ParticleType type)const;
+	const Kinematic&FromFirstVertex(const ParticleType type)const;
 	double PBeam()const;
-	void AddParticleToFirstVertex(ParticleType type,double mass);
+	void AddParticleToFirstVertex(const ParticleType type,const double mass);
 protected:
 	virtual bool DataTypeSpecificEventAnalysis()=0;
 	virtual bool DataSpecificTriggerCheck(int n)const=0;
@@ -60,7 +60,7 @@ private:
 	WTrackBank *fTrackBankFD,*fTrackBankCD;
 	CCardWDET *fDetectorTable;
 	struct particle_info{
-		particle_info(ParticleType type,double mass);
+		particle_info(const ParticleType type,const double mass);
 		ParticleType type;double mass;
 		Kinematic cache;
 	};

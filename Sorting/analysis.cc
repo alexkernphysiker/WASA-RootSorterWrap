@@ -5,7 +5,6 @@
 #include "analysis.h"
 #define static_right(A) (static_cast<decltype(A)&&>(A))
 using namespace std;
-IAnalysis::~IAnalysis(){}
 Analysis::Analysis(){
 	m_count=0;
 	AddLogSubprefix("Analysis");
@@ -22,14 +21,18 @@ Analysis::Analysis(){
 }
 Analysis::~Analysis(){}
 //Triggers
-TrackAnalyse::TrackProcess& Analysis::TrackTypeProcess(TrackType type){
+TrackAnalyse::TrackProcess& Analysis::TrackTypeProcess(const TrackType type){
 	for(TrackTypeRec& rec:m_chain)
 		if(type==rec.first)
 			return rec.second;
 	throw MathTemplates::Exception<Analysis>("Cannot find track type");
 }
-TrackAnalyse::EventProcess& Analysis::EventPreProcessing(){return m_pre_event_proc;}
-TrackAnalyse::EventProcess& Analysis::EventPostProcessing(){return m_post_event_proc;}
+TrackAnalyse::EventProcess& Analysis::EventPreProcessing(){
+	return m_pre_event_proc;
+}
+TrackAnalyse::EventProcess& Analysis::EventPostProcessing(){
+	return m_post_event_proc;
+}
 
 bool Analysis::Trigger(int n)const{
 	return DataSpecificTriggerCheck(n);
@@ -64,11 +67,11 @@ void Analysis::CachePBeam(double value){
 }
 ///KINEMATICS
 Analysis::Kinematic::Kinematic(){E=INFINITY;Th=INFINITY;Phi=INFINITY;}
-Analysis::particle_info::particle_info(ParticleType t, double m){type=t;mass=m;}
-void Analysis::AddParticleToFirstVertex(ParticleType type, double mass){
+Analysis::particle_info::particle_info(const ParticleType t,const double m){type=t;mass=m;}
+void Analysis::AddParticleToFirstVertex(const ParticleType type,const double mass){
 	first_vertex.push_back(particle_info(type,mass));
 }
-const Analysis::Kinematic& Analysis::FromFirstVertex(ParticleType type)const{
+const Analysis::Kinematic& Analysis::FromFirstVertex(const ParticleType type)const{
 	for(const particle_info&info:first_vertex)
 		if(info.type==type)
 			return info.cache;
