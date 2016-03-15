@@ -14,7 +14,7 @@ RealData::RealData()
 }
 RealData::~RealData(){}
 bool RealData::DataTypeSpecificEventAnalysis()const{
-	CachePBeam((BeamMomenta.Reconstruct()/1000.0)+pbeam_measurement_offset);
+	CachePBeam((BeamMomenta()/1000.0)+pbeam_measurement_offset);
 	return true;
 }
 bool RealData::DataSpecificTriggerCheck(int n)const{

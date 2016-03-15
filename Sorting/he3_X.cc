@@ -93,7 +93,7 @@ namespace ReactionSetup{
 						"He3.E.FRH1",{[](WTrack&track){return Forward::Get()[kFRH1].Edep(track);},[](WTrack&track){return track.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy.Reconstruct(track);
+					return energy(track);
 				})
 			)
 			<<(make_shared<ChainCheck>()//for particles stopped in FRH2
@@ -109,7 +109,7 @@ namespace ReactionSetup{
 						"He3.E.FRH2",{[](WTrack&T){return Forward::Get()[kFRH1].Edep(T)+Forward::Get()[kFRH2].Edep(T);},[](WTrack&T){return T.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy.Reconstruct(track);
+					return energy(track);
 				})	
 			)
 		)//end E_dep cuts

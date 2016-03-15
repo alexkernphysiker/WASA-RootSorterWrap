@@ -57,7 +57,7 @@ public:
 			}
 		}
 	}
-	double Reconstruct(Args... args)const{
+	double operator()(Args... args)const{
 		if(data.size()>0){
 			try{
 				return data(Experiment(args...));
@@ -69,80 +69,64 @@ public:
 			return INFINITY;
 		}
 	}
+	FUNC func()const{return [this](Args... args)->double{return operator()(args...);};}
 };
 
 template<class FitFunc,typename... Args>
-class FitBasedReconstruction:public virtual Logger{
+class FitBasedReconstruction{
 public:
 	typedef std::function<double(Args...)> FUNC;
 private:
-	enum Mode{learn,use};
-	Mode mode;
 	std::string m_name;
+	FitFunc m_func;
 	FUNC Theory;
 	std::vector<FUNC> Experiment;
-	FitFunc func;
 	Genetic::ParamSet P;
-	std::vector<Genetic::ParamSet> data;
+	std::shared_ptr<std::vector<Genetic::ParamSet>> data;
 public:
-	FitBasedReconstruction(std::string&&name,std::vector<FUNC> measured,FUNC theory){
+	FitBasedReconstruction(const std::string&&name,const std::vector<FUNC>&&measured,const FUNC theory){
 		using namespace Genetic;
-		m_name=name;Experiment=measured;Theory=theory;
+		m_name=name;
+		Theory=theory;
+		for(auto f:measured)Experiment.push_back(f);
+		data=std::make_shared<std::vector<Genetic::ParamSet>>();
 		std::ifstream file;
 		file.open((DataFiles+name+".fit.txt").c_str());
-		mode=learn;
 		if(file){
 			file>>P;
-			mode=use;
 			file.close();
 		}
-		AddLogSubprefix(name);
-		if(use==mode)
-			Log(NoLog)<<"reconstruction mode";
-		else
-			Log(NoLog)<<"data generating mode";
 	}
-	FitBasedReconstruction(
-		const FitBasedReconstruction&source
-	){
+	FitBasedReconstruction(const FitBasedReconstruction&source){
 		m_name=source.m_name;
-		Experiment=source.Experiment;
+		for(const auto f:source.Experiment)Experiment.push_back(f);
 		Theory=source.Theory;
 		P=source.P;
 		data=source.data;
-		AddLogSubprefix(m_name);
-		Log(NoLog)<<"Copying Fit reconstruction";
-		if(use==mode)
-			Log(NoLog)<<"reconstruction mode";
-		else
-			Log(NoLog)<<"data generating mode";
 	}
 	virtual ~FitBasedReconstruction(){
 		using namespace Genetic;
-		if(learn==mode){
-			Log(NoLog)<<"Saving data";
+		if(data->size()>0){
 			std::ofstream file;
 			file.open((DataFiles+m_name+".simulation.txt").c_str(),ios_base::app);
 			if(file){
-				for(ParamSet&p:data)file<<p<<std::endl;
+				for(const ParamSet&p:*data)file<<p<<std::endl;
 				file.close();
 			}
 		}
 	}
-	double Reconstruct(Args... args){
+	double operator()(Args... args)const{
 		using namespace Genetic;
 		ParamSet X;
 		for(FUNC f:Experiment)X<<f(args...);
-		switch(mode){
-			case learn:
-				X<<Theory(args...);
-				data.push_back(X);
-				break;
-			case use:
-				return func(X,P);
-				break;
-		};
-		return INFINITY;
+		if(P.size()>0){
+			return m_func(X,P);
+		}else{
+			X<<Theory(args...);
+			data->push_back(X);			
+			return INFINITY;
+		}
 	}
+	FUNC func(){return [this](Args... args)->double{return operator()(args...);};}
 };
 #endif 
