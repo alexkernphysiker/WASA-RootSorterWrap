@@ -7,15 +7,13 @@
 #include "reconstruction.h"
 using namespace std;
 const double pbeam_measurement_offset=0.0073;
-RealData::RealData():BeamMomenta("Time.2.PBeam",
-	[this](){return 1000.0*fHeader->GetTimeInCycle();},
-	[](){return INFINITY;}
-){
-	AddLogSubprefix("Real data analysis");
+RealData::RealData()
+:BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;})
+{
 	fHeader = dynamic_cast<REventHeader*>(gDataManager->GetDataObject("REventHeader","Header"));
 }
 RealData::~RealData(){}
-bool RealData::DataTypeSpecificEventAnalysis(){
+bool RealData::DataTypeSpecificEventAnalysis()const{
 	CachePBeam((BeamMomenta.Reconstruct()/1000.0)+pbeam_measurement_offset);
 	return true;
 }

@@ -269,8 +269,7 @@ namespace ReactionSetup{
 	///Reaction analysis types visible from reactions.h
 	Analysis* He3_X_analyse(He3Modification mode){
 		auto res=Prepare(mode);auto Q=Q_axis(res);
-		res->EventPreProcessing()<<make_shared<Hist1D>(dirname(),"0-Reference",Q);
-		if(forData==mode)res->EventPreProcessing()<<[res](){return res->Trigger(trigger_he3_forward.number);};
+		res->EventPreProcessing()<<make_shared<Hist1D>(dirname(),"0-Reference",Q)<<[res](){return res->Trigger(trigger_he3_forward.number);};
 		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()
 			<<ReconstructionProcess(*res,Q)
 			<<KinematicHe3Test(*res,Q,false,"before-cut")<<He3Eta_kin_cut(*res,Q)

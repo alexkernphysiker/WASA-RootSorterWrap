@@ -4,6 +4,7 @@
 #define mpOBjkfX
 #include <vector>
 #include <string>
+#include <memory>
 #include <functional>
 #include <fstream>
 #include "math_h/error.h"
@@ -13,69 +14,58 @@
 #include "analysis.h"
 #include "log.h"
 template<typename... Args>
-class InterpolationBasedReconstruction:public virtual Logger{
+class InterpolationBasedReconstruction{
 public:
 	typedef std::function<double(Args...)> FUNC;
 private:
 	std::string m_name;
-	bool data_present;
 	MathTemplates::LinearInterpolation<double> data;
-	std::vector<std::pair<double,double>> out;
+	std::shared_ptr<std::vector<std::pair<double,double>>> out;
 	FUNC Experiment,Theory;
 public:
-	InterpolationBasedReconstruction(std::string&&name,FUNC measured,FUNC theory){
-		AddLogSubprefix("InterpolationBasedReconstruction");
+	InterpolationBasedReconstruction(const std::string&&name,const FUNC measured,const FUNC theory){
+		out=std::make_shared<std::vector<std::pair<double,double>>>();
 		m_name=name;
-		AddLogSubprefix(m_name);
 		Experiment=measured;
 		Theory=theory;
 		std::ifstream file;
 		file.open((DataFiles+name+".calibration.txt").c_str());
 		if(file){
-			Log(LogDebug)<<"reading input data";
 			double measured,calculated;
 			while(file>>measured>>calculated)
 				data<<make_pair(measured,calculated);
 			file.close();
-			data_present=data.size()>0;
-		}else{
-			data_present=false;
 		}
-		if(!data_present)Log(NoLog)<<"no input data. Running in simulation mode";
-		else Log(NoLog)<<"Input data found. Running in reconstruction mode";
 	}
 	InterpolationBasedReconstruction(
 		const InterpolationBasedReconstruction&source
 	){
 		m_name=source.m_name;
-		data_present=source.data_present;
 		data=source.data;
 		out=source.out;
 		Experiment=source.Experiment;
 		Theory=source.Theory;
 	}
 	virtual ~InterpolationBasedReconstruction(){
-		if(!data_present){
-			Log(NoLog)<<"saving simulation data";
+		if(out->size()>0){
 			std::ofstream file;
 			file.open((DataFiles+m_name+".simulation.txt").c_str(),ios_base::app);
 			if(file){
-				for(auto&p:out)
+				for(auto&p:*out)
 					file<<p.first<<" "<<p.second<<std::endl;
 				file.close();
 			}
 		}
 	}
-	double Reconstruct(Args... args){
-		if(data_present){
+	double Reconstruct(Args... args)const{
+		if(data.size()>0){
 			try{
 				return data(Experiment(args...));
 			}catch(exception){
-				Log(LogWarning)<<"Possibly the measured value is out of range.";
 				return INFINITY;
 			}
 		}else{
-			out.push_back(make_pair(Experiment(args...),Theory(args...)));
+			out->push_back(make_pair(Experiment(args...),Theory(args...)));
 			return INFINITY;
 		}
 	}
