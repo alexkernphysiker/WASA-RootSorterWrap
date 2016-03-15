@@ -66,7 +66,6 @@ private:
 	vector<particle_info> first_vertex;
 	struct Cache{
 		double p_beam_cache;
-		unsigned long m_count;
 	};
 	std::shared_ptr<Cache> m_cache;
 };

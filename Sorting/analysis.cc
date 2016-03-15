@@ -13,7 +13,6 @@ Analysis::Analysis(){
 	if (CDTrackFinder!=0) fTrackBankCD = CDTrackFinder->GetTrackBank();
 	fDetectorTable = dynamic_cast<CCardWDET*>(gParameterManager->GetParameterObject("CCardWDET","default")); 
 	m_cache=make_shared<Cache>();
-	m_cache->m_count=0;
 	m_chain.push_back(make_pair(kFDC,TrackAnalyse::TrackProcess()));
 	m_chain.push_back(make_pair(kFDN,TrackAnalyse::TrackProcess()));
 	m_chain.push_back(make_pair(kCDC,TrackAnalyse::TrackProcess()));
@@ -39,9 +38,6 @@ bool Analysis::Trigger(int n)const{
 }
 void Analysis::ProcessEvent(){
 	m_cache->p_beam_cache=INFINITY;
-	m_cache->m_count++;
-	if(m_cache->m_count%1000==0)
-		cout<<m_cache->m_count+" events";
 	if(DataTypeSpecificEventAnalysis()){
 		if(m_pre_event_proc.Process()){
 			vector<WTrackBank*> BANK;
