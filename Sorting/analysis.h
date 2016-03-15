@@ -20,7 +20,6 @@
 #include <CDTracksSimple.hh>
 #include "trackprocessing.h"
 #include "analysismodule.hh"
-#include "log.h"
 enum TrackType{kFDN=1,kFDC=2,kCDN=11,kCDC=12};
 enum ParticleType{
 	kDummy=0,kGamma=1,kElectron=2,kPositron=3,kPi0=7,kPiPlus=8,kPiMinus=9,

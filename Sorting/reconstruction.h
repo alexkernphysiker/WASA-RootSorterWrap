@@ -12,7 +12,6 @@
 #include "Genetic/paramfunc.h"
 #include "config.h"
 #include "analysis.h"
-#include "log.h"
 template<typename... Args>
 class InterpolationBasedReconstruction{
 public:

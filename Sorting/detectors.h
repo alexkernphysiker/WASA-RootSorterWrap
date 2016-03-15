@@ -5,7 +5,6 @@
 #include <string>
 #include <functional>
 #include <TH2F.h>
-#include "log.h"
 #include "trackprocessing.h"
 enum ForwardDetectorPlane{
 	kForwardError=0,
