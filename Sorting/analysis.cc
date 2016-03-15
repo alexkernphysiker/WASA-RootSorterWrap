@@ -41,15 +41,15 @@ void Analysis::ProcessEvent(){
 	SubLog log=Log(LogDebug);
 	if(DataTypeSpecificEventAnalysis()){
 		if(m_pre_event_proc.Process()){
-			for(const TrackTypeRec& tt:m_chain){
-				vector<WTrackBank*> BANK;
-				BANK.push_back(fTrackBankCD);
-				BANK.push_back(fTrackBankFD);
-				for(WTrackBank*bank:BANK){
-					WTrackIter iterator(bank);
-					while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
-						if(track->Type()==tt.first)tt.second.Process(*track);
-				}
+			vector<WTrackBank*> BANK;
+			BANK.push_back(fTrackBankCD);
+			BANK.push_back(fTrackBankFD);
+			for(WTrackBank*bank:BANK){
+				WTrackIter iterator(bank);
+				while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
+					for(const TrackTypeRec& tt:m_chain)
+						if(track->Type()==tt.first)
+							tt.second.Process(*track);
 			}
 			m_post_event_proc.Process();
 		}
