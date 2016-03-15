@@ -7,20 +7,15 @@
 #include "reactions.h"
 using namespace std;
 using namespace MathTemplates;
-Logger LOG;
 string type;
 void SetAnalysisType(std::string t){
 	type=t;
 }
 
 ClassImp(AnalysisModule);
-AnalysisModule::AnalysisModule(){
-	LOG.AddLogSubprefix("ANALYSIS APPLICATION");
-	LOG.Log(LogError)<<"AnalysisWrap empty constructor. Should not be called but it is";
-}
+AnalysisModule::AnalysisModule(){}
 AnalysisModule::AnalysisModule(const char* name):CAnalysisModule(name){
 	using namespace ReactionSetup;
-	Logger::SubLog log=LOG.Log(NoLog);
 	m_data=nullptr;
 	if("RE_He3eta"==type)
 		m_data= He3_X_reconstruction(forEta);

@@ -5,7 +5,6 @@
 #include "config.h"
 using namespace std;
 int main(int argc, char** argv) {
-	InitLog(LogWarning,argv[1]);
 	int new_c=argc-1;
 	char *args[new_c+1];
 	args[0]=argv[0];
