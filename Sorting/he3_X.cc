@@ -8,9 +8,9 @@
 #include "trackprocessing.h"
 #include "detectors.h"
 #include "reconstruction.h"
-#include "reactions.h"
 #include "data.h"
 #include "montecarlo.h"
+#include "he3_X.h"
 namespace ReactionSetup{
 	using namespace std;
 	using namespace TrackAnalyse;

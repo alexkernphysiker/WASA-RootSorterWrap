@@ -2,7 +2,6 @@
 // MIT license
 #include <fstream>
 #include <exception>
-#include "config.h"
 #include "data.h"
 #include "reconstruction.h"
 using namespace std;
