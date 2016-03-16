@@ -50,7 +50,7 @@ namespace ReactionSetup{
 				res->AddParticleToFirstVertex(kPi0,Particle::pi0().mass());
 				break;
 		};
-		res->EventPreProcessing()<<make_shared<SetOfHists1D>(dirname(),"MissingMass_vertex_reference",Q_axis(*res),MM_vertex(*res));
+		res->EventPreProcessing()<<make_shared<SetOfHists1D>(dirname(),"MissingMass-vertex",Q_axis(*res),MM_vertex(*res));
 		res->EventPreProcessing()<<make_shared<SetOfHists2D>(dirname(),"Kinematic-vertex",Q_axis(*res),Ev(*res),Tv(*res));
 		return res;
 	}
