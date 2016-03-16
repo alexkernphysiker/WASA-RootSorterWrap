@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 		if("Data_He3"==type)
 			res=He3_X_analyse(forData);
 		if(nullptr==res)
-			throw Exception<AnalysisModule>("Cannot create analysis module");
+			throw Exception<Analysis*>("Cannot create analysis module");
 		else return res;
 	});
 	for(int i=1;i<=new_c;i++)
