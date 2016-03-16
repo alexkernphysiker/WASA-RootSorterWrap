@@ -4,7 +4,7 @@
 #include <SorterConfig.hh>
 #include <math_h/error.h>
 #include "analysis-setup.h"
-#include "reactions.h"
+#include "he3_X.h"
 using namespace std;
 using namespace MathTemplates;
 using namespace ReactionSetup;
