@@ -143,7 +143,9 @@ namespace ReactionSetup{
 			<<[res](){return res->Trigger(trigger_he3_forward.number);};
 		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()
 			<<ReconstructionProcess(*res)
-			<<[](WTrack&T,const vector<double>&P)->bool{return Ek_GeV(T,P)<0.45;}
+			<<[](WTrack&T,const vector<double>&P)->bool{
+				return (Ek_GeV(T,P)<0.45)&&(Ek_GeV(T,P)>0.15)&&(Th_deg(T,P)<9.0);
+			}
 			<<MissingMass(*res)<<KinematicHe3Test(*res)
 		);
 		return res;
