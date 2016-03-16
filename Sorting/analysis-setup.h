@@ -2,7 +2,7 @@
 // MIT license
 #ifndef DIQFUKBJVSPNWOVE
 #define DIQFUKBJVSPNWOVE
-#include <string>
-#include "analysismodule.hh"
-void SetAnalysisType(std::string type);
+#include <functional>
+#include "analysis.h"
+void SetAnalysisType(std::function<Analysis*()>create_analysis);
 #endif
