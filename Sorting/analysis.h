@@ -20,52 +20,52 @@
 #include <CDTracksSimple.hh>
 #include "trackprocessing.h"
 #include "analysismodule.hh"
-#include "log.h"
 enum TrackType{kFDN=1,kFDC=2,kCDN=11,kCDC=12};
 enum ParticleType{
 	kDummy=0,kGamma=1,kElectron=2,kPositron=3,kPi0=7,kPiPlus=8,kPiMinus=9,
 	kNeutron=13,kProton=14,kEta=17,kDeuteron=45,kTriton=46,kHe3=49
 };
-class Analysis:public virtual IAnalysis,public virtual Logger{
+class Analysis{
 protected:
 	Analysis();
 public:
 	virtual ~Analysis();
-	virtual void ProcessEvent()override;
+	void ProcessEvent();
 
-	TrackAnalyse::TrackProcess&TrackTypeProcess(TrackType);
+	void AddParticleToFirstVertex(const ParticleType type,const double mass);
+	TrackAnalyse::TrackProcess&TrackTypeProcess(const TrackType);
 	TrackAnalyse::EventProcess&EventPreProcessing();
 	TrackAnalyse::EventProcess&EventPostProcessing();
+	
+	struct Kinematic{Kinematic();double E,Th,Phi;};
+	const Kinematic&FromFirstVertex(const ParticleType type)const;
+	double PBeam()const;
 	bool Trigger(int n)const;
+protected:
+	virtual bool DataTypeSpecificEventAnalysis()const=0;
+	virtual bool DataSpecificTriggerCheck(int n)const=0;
+	void CachePBeam(const double value)const;
+	void ForFirstVertex(std::function<void(ParticleType,double,std::shared_ptr<Kinematic>)>)const;
 private:
 	typedef std::pair<TrackType,TrackAnalyse::TrackProcess> TrackTypeRec;
 	typedef std::vector<TrackTypeRec> TrackTypeRecs;
 	TrackTypeRecs m_chain;
 	TrackAnalyse::EventProcess m_pre_event_proc,m_post_event_proc;
-public:
-	struct Kinematic{Kinematic();double E,Th,Phi;};
-	const Kinematic&FromFirstVertex(ParticleType type)const;
-	double PBeam()const;
-	void AddParticleToFirstVertex(ParticleType type,double mass);
-protected:
-	virtual bool DataTypeSpecificEventAnalysis()=0;
-	virtual bool DataSpecificTriggerCheck(int n)const=0;
-	//Beam momenta calculation
-	void CachePBeam(double value);
-	//Kinematics calculations
-	void ForFirstVertex(std::function<void(ParticleType,double,Kinematic&)>);
-private:
+
 	FDFTHTracks* TrackFinderFD;
 	CDTracksSimple* CDTrackFinder;
 	WTrackBank *fTrackBankFD,*fTrackBankCD;
 	CCardWDET *fDetectorTable;
+
 	struct particle_info{
-		particle_info(ParticleType type,double mass);
+		particle_info(const ParticleType type,const double mass);
 		ParticleType type;double mass;
-		Kinematic cache;
+		std::shared_ptr<Kinematic>cache;
 	};
 	vector<particle_info> first_vertex;
-	double p_beam_cache;
-	unsigned long m_count;
+	struct Cache{
+		double p_beam_cache;
+	};
+	std::shared_ptr<Cache> m_cache;
 };
 #endif

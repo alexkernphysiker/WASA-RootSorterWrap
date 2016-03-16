@@ -1,8 +1,8 @@
 // this file is distributed under 
 // MIT license
 #include "montecarlo.h"
+using namespace std;
 MonteCarlo::MonteCarlo():Analysis(){
-	AddLogSubprefix("MonteCarlo");
 	WTrackFinder *MCTrf = dynamic_cast<WTrackFinder*>(gDataManager->GetAnalysisModule("MCTrackFinder","default"));
 	fMCTrackBank  = MCTrf->GetTrackBank();
 	fMCVertexBank = MCTrf->GetVertexBank();
@@ -10,7 +10,7 @@ MonteCarlo::MonteCarlo():Analysis(){
 	fEventHeader = dynamic_cast<REventWmcHeader*>(gDataManager->GetDataObject("REventWmcHeader","EventHeader"));
 }
 MonteCarlo::~MonteCarlo(){}
-bool MonteCarlo::DataTypeSpecificEventAnalysis(){
+bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 	if(gWasa->IsAnalysisMode(Wasa::kMCRaw)||
 		gWasa->IsAnalysisMode(Wasa::kMCReco)||
 		gWasa->IsAnalysisMode(Wasa::kMC)
@@ -22,14 +22,14 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis(){
 			if(WVertex *vertex=dynamic_cast<WVertex*>(iterator.Next()))
 				for(int particleindex=0; particleindex<vertex->NumberOfParticles(); particleindex++){
 					WParticle *particle=vertex->GetParticle(particleindex);
-					ForFirstVertex([this,&result,particle](ParticleType type,double mass,Kinematic&out){
+					ForFirstVertex([this,&result,particle](ParticleType type,double mass,shared_ptr<Kinematic>out){
 						if(type==particle->GetType()){
-							out.E=particle->GetEkin();
-							out.Th=particle->GetTheta();
-							out.Phi=particle->GetPhi();
-							double p=sqrt(out.E*(out.E+2*mass));
+							out->E=particle->GetEkin();
+							out->Th=particle->GetTheta();
+							out->Phi=particle->GetPhi();
+							double p=sqrt(out->E*(out->E+2*mass));
 							TVector3 P_vec;
-							P_vec.SetMagThetaPhi(p,out.Th,out.Phi);
+							P_vec.SetMagThetaPhi(p,out->Th,out->Phi);
 							result=result+P_vec;
 						}
 					});
@@ -40,5 +40,5 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis(){
 	return false;
 }
 bool MonteCarlo::DataSpecificTriggerCheck(int n)const{
-	return false;
+	return true;
 }

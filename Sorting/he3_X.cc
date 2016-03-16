@@ -98,7 +98,7 @@ namespace ReactionSetup{
 						"He3.E.FRH1",{[](WTrack&track){return Forward::Get()[kFRH1].Edep(track);},[](WTrack&track){return track.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy.Reconstruct(track);
+					return energy(track);
 				})
 			)
 			<<(make_shared<ChainCheck>()//for particles stopped in FRH2
@@ -114,7 +114,7 @@ namespace ReactionSetup{
 						"He3.E.FRH2",{[](WTrack&T){return Forward::Get()[kFRH1].Edep(T)+Forward::Get()[kFRH2].Edep(T);},[](WTrack&T){return T.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy.Reconstruct(track);
+					return energy(track);
 				})	
 			)
 		)//end E_dep cuts
@@ -142,8 +142,8 @@ namespace ReactionSetup{
 	///Reaction analysis types visible from reactions.h
 	Analysis* He3_X_analyse(He3Modification mode){
 		auto res=Prepare(mode);
-		res->EventPreProcessing()<<make_shared<Hist1D>(dirname(),"0-Reference",Q_axis(*res));
-		if(forData==mode)res->EventPreProcessing()<<[res](){return res->Trigger(trigger_he3_forward.number);};
+		res->EventPreProcessing()<<make_shared<Hist1D>(dirname(),"0-Reference",Q_axis(*res))
+			<<[res](){return res->Trigger(trigger_he3_forward.number);};
 		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()
 			<<ReconstructionProcess(*res)
 			<<MissingMass(*res)<<KinematicHe3Test(*res,mode==forEta)
