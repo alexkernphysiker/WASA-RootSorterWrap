@@ -2,7 +2,7 @@
 // MIT license
 #include <Wasa.hh>
 #include <SorterConfig.hh>
-#include "config.h"
+#include "analysis-setup.h"
 using namespace std;
 int main(int argc, char** argv) {
 	int new_c=argc-1;

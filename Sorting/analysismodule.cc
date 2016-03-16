@@ -3,7 +3,7 @@
 #include <functional>
 #include <math_h/error.h>
 #include "analysismodule.hh"
-#include "config.h"
+#include "analysis-setup.h"
 #include "reactions.h"
 using namespace std;
 using namespace MathTemplates;
