@@ -10,8 +10,9 @@
 #include "math_h/error.h"
 #include "math_h/interpolate.h"
 #include "Genetic/paramfunc.h"
-#include "config.h"
+#include "Experiment/config.h"
 #include "analysis.h"
+const std::string DataFiles=std::string("../")+DataDirectoryName+"/";
 template<typename... Args>
 class InterpolationBasedReconstruction{
 public:
