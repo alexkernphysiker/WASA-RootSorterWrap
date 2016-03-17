@@ -1,6 +1,6 @@
 for X in `seq 45873 1 46884`; do
 	if [ -f ${RUNS_DATA}/run_${X} ]; then
-		if [ ! -f $PWD/../Preselection/Data$1_run_${X}.root ]; then
+		if [ ! -f $PWD/../Sorting/Data$1_run_${X}.root ]; then
 			if [ `qstat|grep $1|grep "R \|Q "|wc -l` -lt 50 ]; then
 				if [ `qstat|grep ${X}_$1|wc -l` -lt 1 ]; then
 					scriptname="run_${X}.sh"
