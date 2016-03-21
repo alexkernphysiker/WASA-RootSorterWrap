@@ -20,11 +20,11 @@ public:
 private:
 	std::string m_name;
 	MathTemplates::LinearInterpolation<double> data;
-	std::shared_ptr<std::vector<std::pair<double,double>>> out;
+	std::shared_ptr<std::vector<MathTemplates::point<double>>> out;
 	FUNC Experiment,Theory;
 public:
 	InterpolationBasedReconstruction(const std::string&&name,const FUNC measured,const FUNC theory){
-		out=std::make_shared<std::vector<std::pair<double,double>>>();
+		out=std::make_shared<std::vector<MathTemplates::point<double,double>>>();
 		m_name=name;
 		Experiment=measured;
 		Theory=theory;
@@ -33,7 +33,7 @@ public:
 		if(file){
 			double measured,calculated;
 			while(file>>measured>>calculated)
-				data<<make_pair(measured,calculated);
+				data<<MathTemplates::point<double>(measured,calculated);
 			file.close();
 		}
 	}
@@ -52,7 +52,7 @@ public:
 			file.open((DataFiles+m_name+".simulation.txt").c_str(),ios_base::app);
 			if(file){
 				for(auto&p:*out)
-					file<<p.first<<" "<<p.second<<std::endl;
+					file<<p.X()<<" "<<p.Y()<<std::endl;
 				file.close();
 			}
 		}
@@ -65,7 +65,7 @@ public:
 				return INFINITY;
 			}
 		}else{
-			out->push_back(make_pair(Experiment(args...),Theory(args...)));
+			out->push_back(MathTemplates::point<double>(Experiment(args...),Theory(args...)));
 			return INFINITY;
 		}
 	}
