@@ -10,18 +10,17 @@
 #include <TH1F.h>
 #include <TH2F.h>
 namespace TrackAnalyse{
-	using namespace std;
 	//WTrack cannot be transfered as const because
 	//it does not contain const methods 
 	//(even those ones that really should be)
-	typedef function<double()> ValueIndependent;
-	typedef function<double(WTrack&)> ValueTrackDependent;
-	typedef function<double(const vector<double>&)> ValueParamDependent;
-	typedef function<double(WTrack&,const vector<double>&)> ValueTrackParamDependent;
-	typedef function<bool()> ConditionIndependent;
-	typedef function<bool(WTrack&)> ConditionTrackDependent;
-	typedef function<bool(const vector<double>&)> ConditionParamDependent;
-	typedef function<bool(WTrack&,const vector<double>&)> ConditionTrackParamDependent;
+	typedef std::function<double()> ValueIndependent;
+	typedef std::function<double(WTrack&)> ValueTrackDependent;
+	typedef std::function<double(const std::vector<double>&)> ValueParamDependent;
+	typedef std::function<double(WTrack&,const std::vector<double>&)> ValueTrackParamDependent;
+	typedef std::function<bool()> ConditionIndependent;
+	typedef std::function<bool(WTrack&)> ConditionTrackDependent;
+	typedef std::function<bool(const std::vector<double>&)> ConditionParamDependent;
+	typedef std::function<bool(WTrack&,const std::vector<double>&)> ConditionTrackParamDependent;
 	class Axis{
 	public:
 		Axis(ValueTrackParamDependent v,double f, double t,unsigned int b);
@@ -37,7 +36,7 @@ namespace TrackAnalyse{
 		double left()const;
 		double right()const;
 		unsigned int count()const;
-		double operator()(WTrack&T,const vector<double>&P)const;
+		double operator()(WTrack&T,const std::vector<double>&P)const;
 		ValueTrackParamDependent valuegetter()const;
 		double bin_width()const;
 		double bin_center(size_t i)const;
@@ -51,59 +50,59 @@ namespace TrackAnalyse{
 	};
 	class ITrackParamProcess{
 	public:
-		virtual bool Process(WTrack&,vector<double>&)const=0;
+		virtual bool Process(WTrack&,std::vector<double>&)const=0;
 		virtual ~ITrackParamProcess(){}
 	};
 	class ITrackParamAnalyse:public ITrackParamProcess{
 	public:
-		virtual bool Process(WTrack&,vector<double>&)const final;
+		virtual bool Process(WTrack&,std::vector<double>&)const final;
 		virtual ~ITrackParamAnalyse(){}
 	protected:
-		virtual void Analyse(WTrack&,const vector<double>&)const =0;
+		virtual void Analyse(WTrack&,const std::vector<double>&)const =0;
 	};
 	
 	class Hist1D:public ITrackParamAnalyse{
 	public:
-		Hist1D(string&&dir,string&&name,const Axis&x);
+		Hist1D(const std::string&&dir,const std::string&&name,const Axis&x);
 		virtual ~Hist1D();
 	protected:
-		virtual void Analyse(WTrack&,const vector<double>&)const override;
+		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
 	private:
 		TH1F *hist;
 		Axis X;
 	};
 	class SetOfHists1D:public ITrackParamAnalyse{
 	public:
-		SetOfHists1D(string&&dir,string&&name,const Axis&binning,const Axis&x);
+		SetOfHists1D(const std::string&&dir,const std::string&&name,const Axis&binning,const Axis&x);
 		virtual ~SetOfHists1D();
 	protected:
-		virtual void Analyse(WTrack&,const vector<double>&)const override;
+		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
 	private:
 		Axis Z,X;
 		TH1F *All,*OutOfBorder;
-		vector<TH1F*> Bins;
+		std::vector<TH1F*> Bins;
 	};
 
 	class Hist2D:public ITrackParamAnalyse{
 	public:
-		Hist2D(string&&dir,string&&name,const Axis&x,const Axis&y);
+		Hist2D(const std::string&&dir,const std::string&&name,const Axis&x,const Axis&y);
 		virtual ~Hist2D();
 	protected:
-		virtual void Analyse(WTrack&,const vector<double>&)const override;
+		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
 	private:
 		TH2F *hist;
 		Axis X,Y;
 	};
 	class SetOfHists2D:public ITrackParamAnalyse{
 	public:
-		SetOfHists2D(string&&dir,string&&name,const Axis&binning,const Axis&x,const Axis&y);
+		SetOfHists2D(const std::string&&dir,const std::string&&name,const Axis&binning,const Axis&x,const Axis&y);
 		virtual ~SetOfHists2D();
 	protected:
-		virtual void Analyse(WTrack&,const vector<double>&)const override;
+		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
 	private:
 		Axis Z,X,Y;
 		TH2F *All,*OutOfBorder;
-		vector<TH2F*> Bins;
+		std::vector<TH2F*> Bins;
 	};
 	class Condition:public ITrackParamProcess{
 	public:
@@ -112,7 +111,7 @@ namespace TrackAnalyse{
 		Condition(ConditionParamDependent func);
 		Condition(ConditionIndependent func);
 		virtual ~Condition();
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	private:
 		ConditionTrackParamDependent condition;
 	};
@@ -123,7 +122,7 @@ namespace TrackAnalyse{
 		Parameter(ValueTrackDependent f);
 		Parameter(ValueIndependent f);
 		virtual ~Parameter();
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	private:
 		ValueTrackParamDependent func;
 	};
@@ -132,55 +131,55 @@ namespace TrackAnalyse{
 		AbstractChain();
 	public:
 		virtual ~AbstractChain();
-		AbstractChain&operator<<(shared_ptr<ITrackParamProcess>element);
+		AbstractChain&operator<<(std::shared_ptr<ITrackParamProcess>element);
 	protected:
-		const vector<shared_ptr<ITrackParamProcess>>&chain()const;
+		const std::vector<std::shared_ptr<ITrackParamProcess>>&chain()const;
 	private:
-		vector<shared_ptr<ITrackParamProcess>> m_chain;
+		std::vector<std::shared_ptr<ITrackParamProcess>> m_chain;
 	};
-	shared_ptr<AbstractChain>operator<<(shared_ptr<AbstractChain>ch,shared_ptr<ITrackParamProcess>v);
-	inline shared_ptr<AbstractChain>operator<<(shared_ptr<AbstractChain>ch,ConditionTrackParamDependent f){
-		return ch<<dynamic_pointer_cast<ITrackParamProcess>(make_shared<Condition>(f));
+	std::shared_ptr<AbstractChain>operator<<(std::shared_ptr<AbstractChain>ch,std::shared_ptr<ITrackParamProcess>v);
+	inline std::shared_ptr<AbstractChain>operator<<(std::shared_ptr<AbstractChain>ch,ConditionTrackParamDependent f){
+		return ch<<std::dynamic_pointer_cast<ITrackParamProcess>(std::make_shared<Condition>(f));
 	}
-	inline shared_ptr<AbstractChain>operator<<(shared_ptr<AbstractChain>ch,ConditionTrackDependent f){
-		return ch<<dynamic_pointer_cast<ITrackParamProcess>(make_shared<Condition>(f));
+	inline std::shared_ptr<AbstractChain>operator<<(std::shared_ptr<AbstractChain>ch,ConditionTrackDependent f){
+		return ch<<std::dynamic_pointer_cast<ITrackParamProcess>(std::make_shared<Condition>(f));
 	}
-	inline shared_ptr<AbstractChain>operator<<(shared_ptr<AbstractChain>ch,ConditionParamDependent f){
-		return ch<<dynamic_pointer_cast<ITrackParamProcess>(make_shared<Condition>(f));
+	inline std::shared_ptr<AbstractChain>operator<<(std::shared_ptr<AbstractChain>ch,ConditionParamDependent f){
+		return ch<<std::dynamic_pointer_cast<ITrackParamProcess>(std::make_shared<Condition>(f));
 	}
-	inline shared_ptr<AbstractChain>operator<<(shared_ptr<AbstractChain>ch,ConditionIndependent f){
-		return ch<<dynamic_pointer_cast<ITrackParamProcess>(make_shared<Condition>(f));
+	inline std::shared_ptr<AbstractChain>operator<<(std::shared_ptr<AbstractChain>ch,ConditionIndependent f){
+		return ch<<std::dynamic_pointer_cast<ITrackParamProcess>(std::make_shared<Condition>(f));
 	}
 	class Chain:public AbstractChain{
 	public:
 		Chain(){}
 		virtual ~Chain(){}
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	};
 	class ChainCheck:public AbstractChain{
 	public:
 		ChainCheck(){}
 		virtual ~ChainCheck(){}
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	};
 	class ChainAnd:public AbstractChain{
 	public:
 		ChainAnd(){}
 		virtual ~ChainAnd(){}
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	};
 	class ChainOr:public AbstractChain{
 	public:
 		ChainOr(){}
 		virtual ~ChainOr(){}
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	};
 	class ChainBinner:public AbstractChain{
 	public:
 		ChainBinner(const Axis&source);
 		ChainBinner(Axis&&source);
 		virtual ~ChainBinner();
-		virtual bool Process(WTrack&,vector<double>&)const override;
+		virtual bool Process(WTrack&,std::vector<double>&)const override;
 	private:
 		Axis m_axis;
 	};
@@ -188,45 +187,45 @@ namespace TrackAnalyse{
 	public:
 		TrackProcess(){}
 		~TrackProcess(){}
-		TrackProcess&operator<<(shared_ptr<ITrackParamProcess>element);
+		TrackProcess&operator<<(std::shared_ptr<ITrackParamProcess>element);
 		void Process(WTrack&T)const;
 	private:
-		vector<shared_ptr<ITrackParamProcess>> m_proc;
+		std::vector<std::shared_ptr<ITrackParamProcess>> m_proc;
 	};
-	shared_ptr<TrackProcess>operator<<(shared_ptr<TrackProcess>ch,shared_ptr<ITrackParamProcess>v);
+	std::shared_ptr<TrackProcess>operator<<(std::shared_ptr<TrackProcess>ch,std::shared_ptr<ITrackParamProcess>v);
 	inline TrackProcess&operator<<(TrackProcess&ch,ConditionTrackParamDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline TrackProcess&operator<<(TrackProcess&ch,ConditionTrackDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline TrackProcess&operator<<(TrackProcess&ch,ConditionParamDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline TrackProcess&operator<<(TrackProcess&ch,ConditionIndependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	class EventProcess{
 	public:
 		EventProcess(){}
 		~EventProcess(){}
-		EventProcess&operator<<(shared_ptr<ITrackParamProcess>element);
+		EventProcess&operator<<(std::shared_ptr<ITrackParamProcess>element);
 		bool Process()const;
 	private:
-		vector<shared_ptr<ITrackParamProcess>> m_proc;
+		std::vector<std::shared_ptr<ITrackParamProcess>> m_proc;
 	};
-	shared_ptr<EventProcess>operator<<(shared_ptr<EventProcess>ch,shared_ptr<ITrackParamProcess>v);
+	std::shared_ptr<EventProcess>operator<<(std::shared_ptr<EventProcess>ch,std::shared_ptr<ITrackParamProcess>v);
 	inline EventProcess&operator<<(EventProcess&ch,ConditionTrackParamDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline EventProcess&operator<<(EventProcess&ch,ConditionTrackDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline EventProcess&operator<<(EventProcess&ch,ConditionParamDependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 	inline EventProcess&operator<<(EventProcess&ch,ConditionIndependent f){
-		return ch<<make_shared<Condition>(f);
+		return ch<<std::make_shared<Condition>(f);
 	}
 }
 #endif 

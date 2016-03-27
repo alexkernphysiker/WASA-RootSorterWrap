@@ -12,7 +12,6 @@ enum ForwardDetectorPlane{
 	kFRH1 = 4, kFRH2 = 5, kFRH3 = 6, kFRH4 = 7,kFRH5 = 8, kFVH =9
 };
 namespace TrackAnalyse{
-	using namespace std;
 	class Forward{
 	protected:
 		Forward();
@@ -22,21 +21,21 @@ namespace TrackAnalyse{
 		class plane_data{
 			friend class Forward;
 		public:
-			plane_data(ForwardDetectorPlane p,string&&n,double thr,double upper);
+			plane_data(ForwardDetectorPlane p,const std::string&&n,double thr,double upper);
 			~plane_data();
 			double Edep(WTrack&)const;
 		protected:
 			ForwardDetectorPlane plane()const;
-			const string&name()const;
+			const std::string&name()const;
 			const Axis&axis()const;
 			double threshold()const;
 		private:
 			ForwardDetectorPlane m_plane;
-			string m_name;
+			std::string m_name;
 			double m_thr;
 			Axis m_axis;
 		};
-		typedef vector<plane_data>::const_iterator const_iterator;
+		typedef std::vector<plane_data>::const_iterator const_iterator;
 		const_iterator begin()const;
 		const_iterator cbegin()const;
 		const_iterator end()const;
@@ -44,9 +43,9 @@ namespace TrackAnalyse{
 		size_t count()const;
 		const plane_data&operator[](ForwardDetectorPlane)const;
 		ForwardDetectorPlane StoppingLayer(WTrack&)const;
-		shared_ptr<Chain> CreateMarker(string&&dir,string&&name)const;
+		std::shared_ptr<Chain> CreateMarker(const std::string&&dir,const std::string&&name)const;
 	private:
-		vector<plane_data> PlaneData;
+		std::vector<plane_data> PlaneData;
 	};
 }
 #endif
