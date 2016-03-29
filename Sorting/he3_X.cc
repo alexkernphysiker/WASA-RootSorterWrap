@@ -52,8 +52,8 @@ namespace ReactionSetup{
 				res->AddParticleToFirstVertex(kPi0,Particle::pi0().mass());
 				break;
 		};
-		res->EventPreProcessing()<<make_shared<SetOfHists1D>(dir_v_name(),"MissingMass-vertex",Q_axis(*res),MM_vertex(*res));
-		res->EventPreProcessing()<<make_shared<SetOfHists2D>(dir_v_name(),"Kinematic-vertex",Q_axis(*res),Ev(*res),Tv(*res));
+		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<SetOfHists1D>(dir_v_name(),"MissingMass-vertex",Q_axis(*res),MM_vertex(*res));
+		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<SetOfHists2D>(dir_v_name(),"Kinematic-vertex",Q_axis(*res),Ev(*res),Tv(*res));
 		return res;
 	}
 
@@ -139,24 +139,29 @@ namespace ReactionSetup{
 	Analysis* He3_X_analyse(He3Modification mode){
 		auto res=Prepare(mode);
 		auto trackcount=make_shared<long>(0);
-		res->EventPreProcessing()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res))
-			<<[res](){return res->Trigger(trigger_he3_forward.number);}
+		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res))
 			<<[trackcount](){(*trackcount)=0;return true;};
-		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()
+		res->Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
+			<<[](WTrack&T,const vector<double>&)->bool{return T.Type()==kFDC;}
+			<<[trackcount](){(*trackcount)++;return true;}
 			<<ReconstructionProcess(*res)
 			<<[](WTrack&T,const vector<double>&P)->bool{
 				return (Ek_GeV(T,P)<0.45)&&(Ek_GeV(T,P)>0.15)&&(Th_deg(T,P)<9.0);
 			}
-			<<MissingMass(*res)<<KinematicHe3Test(*res)
-			<<[trackcount](){(*trackcount)++;return true;}
+			<<MissingMass(*res)
+			<<KinematicHe3Test(*res)
 		);
-		res->EventPostProcessing()<<make_shared<Hist1D>(dir_dbg_name(),"He3_tracks",Axis([trackcount]()->double{return *trackcount;},-0.5,9.5,10));
+		res->Trigger(trigger_he3_forward.number).post()<<make_shared<Hist1D>(dir_dbg_name(),"He3_tracks",Axis([trackcount]()->double{return *trackcount;},-0.5,9.5,10));
 		return res;
 	}
 	Analysis* He3_X_reconstruction(He3Modification mode){
 		auto res=Prepare(mode);
-		res->EventPreProcessing()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res));
-		res->TrackTypeProcess(kFDC)<<(make_shared<ChainCheck>()<<ReconstructionProcess(*res)<<KinematicHe3Test(*res));
+		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res));
+		res->Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
+			<<[](WTrack&T,const vector<double>&)->bool{return T.Type()==kFDC;}
+			<<ReconstructionProcess(*res)
+			<<KinematicHe3Test(*res)
+		);
 		return res;
 	}
 }

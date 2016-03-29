@@ -6,6 +6,13 @@
 #include "analysis.h"
 #define static_right(A) (static_cast<decltype(A)&&>(A))
 using namespace std;
+using namespace MathTemplates;
+Analysis::trig_rec::trig_rec(){}
+Analysis::trig_rec::~trig_rec(){}
+TrackAnalyse::EventProcess& Analysis::trig_rec::pre(){return m_pre;}
+TrackAnalyse::TrackProcess& Analysis::trig_rec::per_track(){return m_per_track;}
+TrackAnalyse::EventProcess& Analysis::trig_rec::post(){return m_post;}
+
 Analysis::Analysis(){
 	TrackFinderFD = dynamic_cast<FDFTHTracks*>(gDataManager->GetAnalysisModule("FDFTHTracks","default"));
 	if(TrackFinderFD!=0) fTrackBankFD = TrackFinderFD->GetTrackBank();
@@ -13,51 +20,44 @@ Analysis::Analysis(){
 	if (CDTrackFinder!=0) fTrackBankCD = CDTrackFinder->GetTrackBank();
 	fDetectorTable = dynamic_cast<CCardWDET*>(gParameterManager->GetParameterObject("CCardWDET","default")); 
 	m_cache=make_shared<Cache>();
-	m_chain.push_back(make_pair(kFDC,TrackAnalyse::TrackProcess()));
-	m_chain.push_back(make_pair(kFDN,TrackAnalyse::TrackProcess()));
-	m_chain.push_back(make_pair(kCDC,TrackAnalyse::TrackProcess()));
-	m_chain.push_back(make_pair(kCDN,TrackAnalyse::TrackProcess()));
+	for(size_t i=0;i<33;i++)
+		m_triggers.push_back(trig_rec());
 }
 Analysis::~Analysis(){}
-
-TrackAnalyse::TrackProcess& Analysis::TrackTypeProcess(const TrackType type){
-	for(TrackTypeRec& rec:m_chain)
-		if(type==rec.first)
-			return rec.second;
-	throw MathTemplates::Exception<Analysis>("Cannot find track type");
-}
-TrackAnalyse::EventProcess& Analysis::EventPreProcessing(){
-	return m_pre_event_proc;
-}
-TrackAnalyse::EventProcess& Analysis::EventPostProcessing(){
-	return m_post_event_proc;
+Analysis::trig_rec& Analysis::Trigger(size_t n){
+	if(n>=m_triggers.size())
+		throw Exception<Analysis>("Attempt to access bad trigger record");
+	return m_triggers[n];
 }
 
-bool Analysis::Trigger(int n)const{
-	return DataSpecificTriggerCheck(n);
-}
 void Analysis::ProcessEvent(){
 	m_cache->p_beam_cache=INFINITY;
 	if(DataTypeSpecificEventAnalysis()){
-		if(m_pre_event_proc.Process()){
-			vector<WTrackBank*> BANK;
-			BANK.push_back(fTrackBankCD);
-			BANK.push_back(fTrackBankFD);
-			for(WTrackBank*bank:BANK){
-				WTrackIter iterator(bank);
-				while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
-					for(const TrackTypeRec& tt:m_chain)
-						if(track->Type()==tt.first)
-							tt.second.Process(*track);
-			}
-			m_post_event_proc.Process();
+		vector<bool> trig;
+		for(size_t i=0;i<m_triggers.size();i++)
+			trig.push_back(DataSpecificTriggerCheck(i));
+		for(size_t i=0;i<m_triggers.size();i++)
+			if(trig[i])
+				trig[i]=m_triggers[i].pre().Process();
+		vector<WTrackBank*> BANK;
+		BANK.push_back(fTrackBankCD);
+		BANK.push_back(fTrackBankFD);
+		for(WTrackBank*bank:BANK){
+			WTrackIter iterator(bank);
+			while(WTrack* track = dynamic_cast<WTrack*> (iterator.Next()))
+				for(size_t i=0;i<m_triggers.size();i++)
+					if(trig[i])
+						m_triggers[i].per_track().Process(*track);
 		}
+		for(size_t i=0;i<m_triggers.size();i++)
+			if(trig[i])
+				m_triggers[i].post().Process();
 	}
 }
 double Analysis::PBeam()const{return m_cache->p_beam_cache;}
 void Analysis::CachePBeam(const double value)const{
 	if(value>0)m_cache->p_beam_cache=value;
-	else throw MathTemplates::Exception<Analysis>("Wrong beam momentum value");
+	else throw Exception<Analysis>("Wrong beam momentum value");
 }
 
 
@@ -75,7 +75,7 @@ const Analysis::Kinematic& Analysis::FromFirstVertex(const ParticleType type)con
 	for(const particle_info&info:first_vertex)
 		if(info.type==type)
 			return *info.cache;
-	throw MathTemplates::Exception<Analysis>("Particle not found in the vertex");
+	throw Exception<Analysis>("Particle not found in the vertex");
 }
 void Analysis::ForFirstVertex(function<void(ParticleType,double,shared_ptr<Kinematic>)> cyclebody)const{
 	for(const particle_info&info:first_vertex)

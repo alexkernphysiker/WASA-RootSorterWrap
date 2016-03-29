@@ -32,37 +32,42 @@ public:
 	virtual ~Analysis();
 	void ProcessEvent();
 
-	void AddParticleToFirstVertex(const ParticleType type,const double mass);
-	TrackAnalyse::TrackProcess&TrackTypeProcess(const TrackType);
-	TrackAnalyse::EventProcess&EventPreProcessing();
-	TrackAnalyse::EventProcess&EventPostProcessing();
+	double PBeam()const;
+	class trig_rec{
+	public:
+		trig_rec();
+		~trig_rec();
+		TrackAnalyse::EventProcess&pre();
+		TrackAnalyse::TrackProcess&per_track();
+		TrackAnalyse::EventProcess&post();
+	private:
+		TrackAnalyse::TrackProcess m_per_track;
+		TrackAnalyse::EventProcess m_pre,m_post;
+	};
+	trig_rec&Trigger(size_t n);
 	
 	struct Kinematic{Kinematic();double E,Th,Phi;};
 	const Kinematic&FromFirstVertex(const ParticleType type)const;
-	double PBeam()const;
-	bool Trigger(int n)const;
+	void AddParticleToFirstVertex(const ParticleType type,const double mass);
 protected:
 	virtual bool DataTypeSpecificEventAnalysis()const=0;
 	virtual bool DataSpecificTriggerCheck(int n)const=0;
 	void CachePBeam(const double value)const;
 	void ForFirstVertex(std::function<void(ParticleType,double,std::shared_ptr<Kinematic>)>)const;
 private:
-	typedef std::pair<TrackType,TrackAnalyse::TrackProcess> TrackTypeRec;
-	typedef std::vector<TrackTypeRec> TrackTypeRecs;
-	TrackTypeRecs m_chain;
-	TrackAnalyse::EventProcess m_pre_event_proc,m_post_event_proc;
-
 	FDFTHTracks* TrackFinderFD;
 	CDTracksSimple* CDTrackFinder;
 	WTrackBank *fTrackBankFD,*fTrackBankCD;
 	CCardWDET *fDetectorTable;
+	
+	std::vector<trig_rec> m_triggers;
 
 	struct particle_info{
 		particle_info(const ParticleType type,const double mass);
 		ParticleType type;double mass;
 		std::shared_ptr<Kinematic>cache;
 	};
-	vector<particle_info> first_vertex;
+	std::vector<particle_info> first_vertex;
 	struct Cache{
 		double p_beam_cache;
 	};
