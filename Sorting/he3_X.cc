@@ -100,7 +100,10 @@ namespace ReactionSetup{
 						"He3.E.FRH1",{[](WTrack&track){return Forward::Get()[kFRH1].Edep(track);},[](WTrack&track){return track.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy(track);
+					double e=energy(track);
+					//Energy correction due to comparing kinematic histograms
+					if(dynamic_cast<const RealData*>(&data))e+=0.02;
+					return e;
 				})
 			)
 			<<(make_shared<ChainCheck>()
