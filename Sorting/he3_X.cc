@@ -161,7 +161,8 @@ namespace ReactionSetup{
 					(*im_val)=table[0].Y();
 				return true;
 			}
-			<<make_shared<Hist1D>("CentralGammas","inv_mass_2gamma",Axis([im_val]()->double{return *im_val;},0.0,0.8,800));
+			<<make_shared<Hist1D>("CentralGammas","inv_mass_2gamma",Axis([im_val]()->double{return *im_val;},0.0,0.8,800))
+			<<make_shared<Hist1D>("CentralGammas","neutral_tracks_count",Axis([data]()->double{return data->size();},-0.5,9.5,10));
 	}
 	
 	Analysis* He3_X_analyse(He3Modification mode){
