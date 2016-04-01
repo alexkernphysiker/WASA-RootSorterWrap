@@ -57,6 +57,8 @@ namespace ReactionSetup{
 		return res;
 	}
 
+	//Energy correction due to comparing kinematic histograms
+	const double correct_energy=0.015;
 	shared_ptr<AbstractChain> ReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dir_r_name(),"1-AllTracks")
@@ -101,8 +103,8 @@ namespace ReactionSetup{
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
 					double e=energy(track);
-					//Energy correction due to comparing kinematic histograms
-					if(dynamic_cast<const RealData*>(&data))e+=0.02;
+					if(dynamic_cast<const RealData*>(&data))
+						e+=correct_energy;
 					return e;
 				})
 			)
@@ -119,7 +121,10 @@ namespace ReactionSetup{
 						"He3.E.FRH2",{[](WTrack&T){return Forward::Get()[kFRH1].Edep(T)+Forward::Get()[kFRH2].Edep(T);},[](WTrack&T){return T.Theta();}},
 						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
 					);
-					return energy(track);
+					double e=energy(track);
+					if(dynamic_cast<const RealData*>(&data))
+						e+=correct_energy;
+					return e;
 				})	
 			)
 		)
