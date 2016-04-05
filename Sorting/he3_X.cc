@@ -23,34 +23,37 @@ namespace ReactionSetup{
 	string dir_v_name(){return "He3Forward_Vertices";};
 	string dir_r_name(){return "He3Forward_Reconstruction";};
 	string dir_dbg_name(){return "He3Forward_Debug";};
-	Reaction He3eta(Particle::p(),Particle::d(),{Particle::he3(),Particle::eta()});
+	const Reaction He3eta(Particle::p(),Particle::d(),{Particle::he3(),Particle::eta()});
 	Axis Q_axis(const Analysis&res){return Axis([&res]()->double{return 1000.0*He3eta.P2Q(res.PBeam());},0.0,30.0,12);}
 	Axis MM_vertex(const Analysis&res){
 		return Axis([&res]()->double{
-			Analysis::Kinematic p=res.FromFirstVertex(kHe3);
-			return He3eta.MissingMass({{.index=0,.E=p.E,.theta=p.Th,.phi=p.Phi}},res.PBeam());
+			for(const auto&P:res.Vertex(0))if(P.particle==Particle::he3())
+				return He3eta.MissingMass({{.index=0,.E=P.E,.theta=P.Th,.phi=P.Phi}},res.PBeam());
+			return INFINITY;
 		},0.0,0.8,800);
 	}
 	Axis Th_deg([](const vector<double>&P)->double{return P[0];},3.5,9.0,550);
 	Axis Phi_deg([](const vector<double>&P)->double{return P[1];},0.0,360.0,360);
 	Axis Ek_GeV([](const vector<double>&P)->double{return P[2];},0.1,0.6,500);
 	Axis MM_GeV([](const vector<double>&P)->double{return P[3];},0.0,0.8,800);
-	Axis Ev(const Analysis&data){return Axis([&data]()->double{return data.FromFirstVertex(kHe3).E;},Ek_GeV);}
-	Axis Tv(const Analysis&data){return Axis([&data]()->double{return data.FromFirstVertex(kHe3).Th*180.0/PI();},Th_deg);}
+	Axis Ev(const Analysis&data){return Axis([&data]()->double{
+		for(const auto&P:data.Vertex(0))if(P.particle==Particle::he3())
+			return P.E;
+		return INFINITY;
+	},Ek_GeV);}
+	Axis Tv(const Analysis&data){return Axis([&data]()->double{
+		for(const Analysis::Kinematic&P:data.Vertex(0))if(P.particle==Particle::he3())
+			return P.Th*180.0/PI();
+		return INFINITY;
+	},Th_deg);}
 	Analysis*Prepare(He3Modification mode){
 		Analysis* res=nullptr;
 		switch(mode){
 			case forData:
 				return new RealData();
 			case forEta:
-				res=new MonteCarlo();
-				res->AddParticleToFirstVertex(kHe3,Particle::he3().mass());
-				res->AddParticleToFirstVertex(kEta,Particle::eta().mass());
-				break;
 			case forPi0:
 				res=new MonteCarlo();
-				res->AddParticleToFirstVertex(kHe3,Particle::he3().mass());
-				res->AddParticleToFirstVertex(kPi0,Particle::pi0().mass());
 				break;
 		};
 		res->Trigger(0).pre()<<make_shared<SetOfHists1D>(dir_v_name(),"MissingMass-vertex",Q_axis(*res),MM_vertex(*res));
@@ -99,7 +102,11 @@ namespace ReactionSetup{
 				<<make_shared<Parameter>([&data](WTrack&track)->double{
 					static FitBasedReconstruction<Reconstruction::He3EnergyFRH1,WTrack&> energy(
 						"He3.E.FRH1",{[](WTrack&track){return Forward::Get()[kFRH1].Edep(track);},[](WTrack&track){return track.Theta();}},
-						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
+						[&data](WTrack&)->double{
+							for(const auto&P:data.Vertex(0))if(P.particle==Particle::he3())
+								return P.E;
+							return INFINITY;
+						}
 					);
 					return energy(track);
 				})
@@ -115,7 +122,11 @@ namespace ReactionSetup{
 				<<make_shared<Parameter>([&data](WTrack&track)->double{
 					static FitBasedReconstruction<Reconstruction::He3EnergyFRH2,WTrack&> energy(
 						"He3.E.FRH2",{[](WTrack&T){return Forward::Get()[kFRH1].Edep(T)+Forward::Get()[kFRH2].Edep(T);},[](WTrack&T){return T.Theta();}},
-						[&data](WTrack&){return data.FromFirstVertex(kHe3).E;}
+						[&data](WTrack&)->double{
+							for(const auto&P:data.Vertex(0))if(P.particle==Particle::he3())
+								return P.E;
+							return INFINITY;
+						}
 					);
 					return energy(track);
 				})	

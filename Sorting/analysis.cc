@@ -12,6 +12,10 @@ Analysis::trig_rec::~trig_rec(){}
 TrackAnalyse::EventProcess& Analysis::trig_rec::pre(){return m_pre;}
 TrackAnalyse::TrackProcess& Analysis::trig_rec::per_track(){return m_per_track;}
 TrackAnalyse::EventProcess& Analysis::trig_rec::post(){return m_post;}
+struct Analysis::Cache{
+	double p_beam_cache;
+	vector<vector<Analysis::Kinematic>> vertex_cache;
+};
 
 Analysis::Analysis(){
 	TrackFinderFD = dynamic_cast<FDFTHTracks*>(gDataManager->GetAnalysisModule("FDFTHTracks","default"));
@@ -59,25 +63,17 @@ void Analysis::CachePBeam(const double value)const{
 	if(value>0)m_cache->p_beam_cache=value;
 	else throw Exception<Analysis>("Wrong beam momentum value");
 }
+const vector<Analysis::Kinematic>&Analysis::Vertex(const size_t index) const{
+	if(index>=m_cache->vertex_cache.size())throw Exception<Analysis>("vertex index out of range");
+	return m_cache->vertex_cache[index];
+}
+void Analysis::ClearVerticesCache() const{
+	m_cache->vertex_cache.clear();
+}
+void Analysis::CacheVertex(const vector<Kinematic>& item) const{
+	m_cache->vertex_cache.push_back(vector<Kinematic>());
+	for(const auto&i:item)m_cache->vertex_cache[m_cache->vertex_cache.size()-1].push_back(i);
+}
 
 
 
-Analysis::Kinematic::Kinematic(){
-	E=INFINITY;Th=INFINITY;Phi=INFINITY;
-}
-Analysis::particle_info::particle_info(const ParticleType t,const double m){
-	type=t;mass=m;cache=make_shared<Kinematic>();
-}
-void Analysis::AddParticleToFirstVertex(const ParticleType type,const double mass){
-	first_vertex.push_back(particle_info(type,mass));
-}
-const Analysis::Kinematic& Analysis::FromFirstVertex(const ParticleType type)const{
-	for(const particle_info&info:first_vertex)
-		if(info.type==type)
-			return *info.cache;
-	throw Exception<Analysis>("Particle not found in the vertex");
-}
-void Analysis::ForFirstVertex(function<void(ParticleType,double,shared_ptr<Kinematic>)> cyclebody)const{
-	for(const particle_info&info:first_vertex)
-		cyclebody(info.type,info.mass,info.cache);
-}
