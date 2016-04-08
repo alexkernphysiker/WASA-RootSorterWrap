@@ -57,8 +57,6 @@ namespace ReactionSetup{
 		return res;
 	}
 
-	//Energy correction due to comparing kinematic histograms
-	const double correct_energy=0.016;
 	shared_ptr<AbstractChain> ReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dir_r_name(),"1-AllTracks")
@@ -104,7 +102,7 @@ namespace ReactionSetup{
 					);
 					double e=energy(track);
 					if(dynamic_cast<const RealData*>(&data))
-						e+=correct_energy;
+						e+=he3_forward_correct_energy;
 					return e;
 				})
 			)
@@ -123,7 +121,7 @@ namespace ReactionSetup{
 					);
 					double e=energy(track);
 					if(dynamic_cast<const RealData*>(&data))
-						e+=correct_energy;
+						e+=he3_forward_correct_energy;
 					return e;
 				})	
 			)
