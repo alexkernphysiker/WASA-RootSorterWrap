@@ -154,7 +154,7 @@ namespace ReactionSetup{
 		res->Trigger(17).per_track()<<(make_shared<ChainCheck>()
 			<<[](WTrack&T)->bool{return T.Type()==kCDN;}
 			<<[data](WTrack&T)->bool{
-				data->push_back({.particle=Particle::gamma(),.E=T.P(),.theta=T.Theta(),.phi=T.Phi()});
+				data->push_back({.particle=Particle::gamma(),.E=T.Edep(),.theta=T.Theta(),.phi=T.Phi()});
 				return true;
 			}
 		);
