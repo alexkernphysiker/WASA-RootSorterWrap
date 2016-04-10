@@ -64,7 +64,8 @@ void Analysis::CachePBeam(const double value)const{
 	else throw Exception<Analysis>("Wrong beam momentum value");
 }
 const vector<Analysis::Kinematic>&Analysis::Vertex(const size_t index) const{
-	if(index>=m_cache->vertex_cache.size())throw Exception<Analysis>("vertex index out of range");
+	if(index>=m_cache->vertex_cache.size())
+		throw Exception<Analysis>("vertex index out of range");
 	return m_cache->vertex_cache[index];
 }
 void Analysis::ClearVerticesCache() const{
@@ -72,7 +73,8 @@ void Analysis::ClearVerticesCache() const{
 }
 void Analysis::CacheVertex(const vector<Kinematic>& item) const{
 	m_cache->vertex_cache.push_back(vector<Kinematic>());
-	for(const auto&i:item)m_cache->vertex_cache[m_cache->vertex_cache.size()-1].push_back(i);
+	for(const auto&i:item)
+		m_cache->vertex_cache[m_cache->vertex_cache.size()-1].push_back(i);
 }
 
 
