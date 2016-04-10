@@ -1,13 +1,31 @@
 // this file is distributed under 
 // MIT license
+#include <map>
+#include "math_h/vectors.h"
+#include "Kinematics/particles.h"
 #include "montecarlo.h"
 using namespace std;
+using namespace MathTemplates;
+enum ParticleType{
+	kDummy=0,kGamma=1,kElectron=2,kPositron=3,kPi0=7,kPiPlus=8,kPiMinus=9,
+	kNeutron=13,kProton=14,kEta=17,kDeuteron=45,kTriton=46,kHe3=49
+};
+map<int,Particle> dictionary;
 MonteCarlo::MonteCarlo():Analysis(){
 	WTrackFinder *MCTrf = dynamic_cast<WTrackFinder*>(gDataManager->GetAnalysisModule("MCTrackFinder","default"));
 	fMCTrackBank  = MCTrf->GetTrackBank();
 	fMCVertexBank = MCTrf->GetVertexBank();
 	fHeader = dynamic_cast<REventHeader*>(gDataManager->GetDataObject("REventHeader","Header"));
 	fEventHeader = dynamic_cast<REventWmcHeader*>(gDataManager->GetDataObject("REventWmcHeader","EventHeader"));
+	dictionary[kGamma]=Particle::gamma();
+	dictionary[kPi0]=Particle::pi0();
+	dictionary[kPiMinus]=Particle::pi_minus();
+	dictionary[kPiPlus]=Particle::pi_plus();
+	dictionary[kNeutron]=Particle::n();
+	dictionary[kProton]=Particle::p();
+	dictionary[kEta]=Particle::eta();
+	dictionary[kDeuteron]=Particle::d();
+	dictionary[kHe3]=Particle::he3();
 }
 MonteCarlo::~MonteCarlo(){}
 bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
@@ -15,26 +33,21 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 		gWasa->IsAnalysisMode(Wasa::kMCReco)||
 		gWasa->IsAnalysisMode(Wasa::kMC)
 	){
-		TVector3 result;
-		result.SetMagThetaPhi(0,0,0);
+		ClearVerticesCache();
 		WVertexIter iterator(fMCVertexBank);
 		if(dynamic_cast<WVertex*>(iterator.Next()))
-			if(WVertex *vertex=dynamic_cast<WVertex*>(iterator.Next()))
+			while(WVertex *vertex=dynamic_cast<WVertex*>(iterator.Next())){
+				vector<Kinematic> vertex_rec;
 				for(int particleindex=0; particleindex<vertex->NumberOfParticles(); particleindex++){
-					WParticle *particle=vertex->GetParticle(particleindex);
-					ForFirstVertex([this,&result,particle](ParticleType type,double mass,shared_ptr<Kinematic>out){
-						if(type==particle->GetType()){
-							out->E=particle->GetEkin();
-							out->Th=particle->GetTheta();
-							out->Phi=particle->GetPhi();
-							double p=sqrt(out->E*(out->E+2*mass));
-							TVector3 P_vec;
-							P_vec.SetMagThetaPhi(p,out->Th,out->Phi);
-							result=result+P_vec;
-						}
-					});
+					WParticle *p=vertex->GetParticle(particleindex);
+					vertex_rec.push_back({.particle=dictionary[p->GetType()],.E=p->GetEkin(),.Th=p->GetTheta(),.Phi=p->GetPhi()});
 				}
-		CachePBeam(result.Mag());
+				CacheVertex(vertex_rec);
+			}
+		auto P=Vector3<double>::zero();
+		for(const Kinematic&item:Vertex(0))
+			P+=Vector3<double>::Polar(sqrt(item.E*(item.E+2*item.particle.mass())),item.Th,item.Phi);
+		CachePBeam(P.mag());
 		return true;
 	}
 	return false;
