@@ -46,7 +46,7 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 			}
 		auto P=Vector3<double>::zero();
 		for(const Kinematic&item:Vertex(0))
-			P+=Vector3<double>::Polar(sqrt(item.E*(item.E+2*item.particle.mass())),item.Th,item.Phi);
+			P+=Vector3<double>::Polar(item.particle.E2P(item.E),item.Th,item.Phi);
 		CachePBeam(P.mag());
 		return true;
 	}
