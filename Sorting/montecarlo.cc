@@ -10,7 +10,7 @@ enum ParticleType{
 	kDummy=0,kGamma=1,kElectron=2,kPositron=3,kPi0=7,kPiPlus=8,kPiMinus=9,
 	kNeutron=13,kProton=14,kEta=17,kDeuteron=45,kTriton=46,kHe3=49
 };
-map<int,Particle> dictionary;
+map<ParticleType,Particle> dictionary;
 MonteCarlo::MonteCarlo():Analysis(){
 	WTrackFinder *MCTrf = dynamic_cast<WTrackFinder*>(gDataManager->GetAnalysisModule("MCTrackFinder","default"));
 	fMCTrackBank  = MCTrf->GetTrackBank();
@@ -40,7 +40,12 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 				vector<Kinematic> vertex_rec;
 				for(int particleindex=0; particleindex<vertex->NumberOfParticles(); particleindex++){
 					WParticle *p=vertex->GetParticle(particleindex);
-					vertex_rec.push_back({.particle=dictionary[p->GetType()],.E=p->GetEkin(),.Th=p->GetTheta(),.Phi=p->GetPhi()});
+					vertex_rec.push_back({
+						.particle=dictionary[ParticleType(p->GetType())],
+						.E=p->GetEkin(),
+						.Th=p->GetTheta(),
+						.Phi=p->GetPhi()
+					});
 				}
 				CacheVertex(vertex_rec);
 			}
