@@ -166,10 +166,14 @@ namespace ReactionSetup{
 				for(size_t i=0;i<data->size();i++)
 					for(size_t j=i+1;j<data->size();j++){
 						double im=InvariantMass({data->operator[](i),data->operator[](j)});
-						table<<point<double>(pow(im-Particle::eta().mass(),2),im);
+						double rest=0;
+						for(size_t k=0;k<data->size();k++)if((k!=i)&&(k!=j))
+							rest+=data->operator[](k).E;
+						table<<point<double>(rest,im);
 					}
 				if(table.size()>0)
-					(*im_val)=table[0].Y();
+					if(table[0].X()<0.050)//noise threshold
+						(*im_val)=table[0].Y();
 				return true;
 			}
 			<<make_shared<Hist1D>("CentralGammas","inv_mass_2gamma",Axis([im_val]()->double{return *im_val;},0.0,0.8,800))
