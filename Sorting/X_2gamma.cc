@@ -8,13 +8,17 @@ namespace ReactionSetup{
 	using namespace MathTemplates;
 	void SearchGammaTracks(Analysis&res){
 		auto data=make_shared<vector<particle_kinematics>>();
-		res.Trigger(17).pre()<<[data](){data->clear(); return true;};
+		res.Trigger(17).pre()
+			<< make_shared<Hist1D>("CentralGammas","0-Reference",Q_axis(res))
+			<< [data](){data->clear(); return true;};
 		res.Trigger(17).per_track()<<(make_shared<ChainCheck>()
-		<<[](WTrack&T)->bool{return T.Type()==kCDN;}
-		<<[data](WTrack&T)->bool{
-			data->push_back({.particle=Particle::gamma(),.E=T.Edep(),.theta=T.Theta(),.phi=T.Phi()});
-			return true;
-		}
+			<< [](WTrack&T)->bool{
+				return T.Type()==kCDN;
+			}
+			<< [data](WTrack&T)->bool{
+				data->push_back({.particle=Particle::gamma(),.E=T.Edep(),.theta=T.Theta(),.phi=T.Phi()});
+				return true;
+			}
 		);
 		auto im_val=make_shared<double>(INFINITY);
 		res.Trigger(17).post() << (make_shared<ChainCheck>()
@@ -28,11 +32,10 @@ namespace ReactionSetup{
 						rest+=data->operator[](k).E;
 					table<<point<double>(rest,im);
 				}
-				if(table.size()>0)
-					if(table[0].X()<0.050){//noise threshold
-						(*im_val)=table[0].Y();
-						return true;
-					}
+				if(table.size()>0)if(table[0].X()<0.050){
+					(*im_val)=table[0].Y();
+					return true;
+				}
 				return false;
 			}
 			<< make_shared<SetOfHists1D>("CentralGammas","InvMass2Gamma",Q_axis(res),Axis([im_val]()->double{return *im_val;},0.0,0.8,800))
