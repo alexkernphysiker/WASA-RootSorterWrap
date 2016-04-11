@@ -4,7 +4,9 @@
 #include <SorterConfig.hh>
 #include <math_h/error.h>
 #include "analysis-setup.h"
+#include "prepare.h"
 #include "he3_X.h"
+#include "X_2gamma.h"
 using namespace std;
 using namespace MathTemplates;
 using namespace ReactionSetup;
@@ -17,24 +19,30 @@ int main(int argc, char** argv) {
 	string type(argv[1]);
 	SetAnalysisType([type](){
 		Analysis* res=nullptr;
-		if("RE_He3eta"==type)
-			res= He3_X_reconstruction(forEta);
 		if(
+			("RE_He3eta"==type)||
 			("RE_He3pi0"==type)||
 			("RE_He3pi0pi0"==type)||
 			("RE_He3pi0pi0pi0"==type)
-		)
-			res=He3_X_reconstruction(forPi0);;
-		if("MC_He3eta"==type)
-			res=He3_X_analyse(forEta);
+		){
+			res= Prepare(forMC);
+			He3_X_reconstruction(*res);;
+		}
 		if(
+			("MC_He3eta"==type)||
 			("MC_He3pi0"==type)||
 			("MC_He3pi0pi0"==type)||
 			("MC_He3pi0pi0pi0"==type)
-		)
-			res=He3_X_analyse(forPi0);
-		if("Data_He3"==type)
-			res=He3_X_analyse(forData);
+		){
+			res= Prepare(forMC);
+			He3_X_analyse(*res);
+			SearchGammaTracks(*res);
+		}
+		if("Data_He3"==type){
+			res= Prepare(forData);
+			He3_X_analyse(*res);
+			SearchGammaTracks(*res);
+		}
 		if(nullptr==res)
 			throw Exception<Analysis*>("Cannot create analysis module");
 		else return res;

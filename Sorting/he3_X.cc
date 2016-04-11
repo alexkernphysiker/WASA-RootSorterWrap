@@ -4,14 +4,7 @@
 #include <TCutG.h>
 #include "math_h/functions.h"
 #include "math_h/tabledata.h"
-#include "ReconstructionFit/reconstruction_types.h"
-#include "Experiment/experiment_conv.h"
-#include "Kinematics/reactions.h"
-#include "trackprocessing.h"
-#include "detectors.h"
-#include "reconstruction.h"
 #include "data.h"
-#include "montecarlo.h"
 #include "he3_X.h"
 namespace ReactionSetup{
 	using namespace std;
@@ -23,12 +16,12 @@ namespace ReactionSetup{
 	string dir_v_name(){return "He3Forward_Vertices";};
 	string dir_r_name(){return "He3Forward_Reconstruction";};
 	string dir_dbg_name(){return "He3Forward_Debug";};
-	const Reaction He3eta(Particle::p(),Particle::d(),{Particle::he3(),Particle::eta()});
-	Axis Q_axis(const Analysis&res){return Axis([&res]()->double{return 1000.0*He3eta.P2Q(res.PBeam());},0.0,30.0,12);}
+	
+	
 	Axis MM_vertex(const Analysis&res){
 		return Axis([&res]()->double{
 			for(const auto&P:res.Vertex(0))if(P.particle==Particle::he3())
-				return He3eta.MissingMass({{.index=0,.E=P.E,.theta=P.Th,.phi=P.Phi}},res.PBeam());
+				return He3eta().MissingMass({{.index=0,.E=P.E,.theta=P.Th,.phi=P.Phi}},res.PBeam());
 			return INFINITY;
 		},0.0,0.8,800);
 	}
@@ -46,20 +39,6 @@ namespace ReactionSetup{
 			return P.Th*180.0/PI();
 		return INFINITY;
 	},Th_deg);}
-	Analysis*Prepare(He3Modification mode){
-		Analysis* res=nullptr;
-		switch(mode){
-			case forData:
-				return new RealData();
-			case forEta:
-			case forPi0:
-				res=new MonteCarlo();
-				break;
-		};
-		res->Trigger(0).pre()<<make_shared<SetOfHists1D>(dir_v_name(),"MissingMass-vertex",Q_axis(*res),MM_vertex(*res));
-		res->Trigger(0).pre()<<make_shared<SetOfHists2D>(dir_v_name(),"Kinematic-vertex",Q_axis(*res),Ev(*res),Tv(*res));
-		return res;
-	}
 
 	shared_ptr<AbstractChain> ForwardReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
@@ -146,7 +125,7 @@ namespace ReactionSetup{
 	shared_ptr<AbstractChain> He3MissingMass(const Analysis&data){
 		return make_shared<Chain>()
 		<<make_shared<Parameter>([&data](WTrack&T,const vector<double>&P)->double{
-			return He3eta.MissingMass({{.index=0,.E=Ek_GeV(T,P),.theta=T.Theta(),.phi=T.Phi()}},data.PBeam());
+			return He3eta().MissingMass({{.index=0,.E=Ek_GeV(T,P),.theta=T.Theta(),.phi=T.Phi()}},data.PBeam());
 		})
 		<<make_shared<SetOfHists1D>(dir_r_name(),"MissingMass",Q_axis(data),MM_GeV);
 	}
@@ -154,70 +133,37 @@ namespace ReactionSetup{
 		return make_shared<Chain>()<<make_shared<SetOfHists2D>(dir_r_name(),"Kinematic-reconstructed",Q_axis(data),Ek_GeV,Th_deg);
 	}
 	
-	void SearchGammaTracks(Analysis* res){
-		auto data=make_shared<vector<particle_kinematics>>();
-		res->Trigger(17).pre()<<[data](){data->clear(); return true;};
-		res->Trigger(17).per_track()<<(make_shared<ChainCheck>()
-			<<[](WTrack&T)->bool{return T.Type()==kCDN;}
-			<<[data](WTrack&T)->bool{
-				data->push_back({.particle=Particle::gamma(),.E=T.Edep(),.theta=T.Theta(),.phi=T.Phi()});
-				return true;
-			}
-		);
-		auto im_val=make_shared<double>(INFINITY);
-		res->Trigger(17).post()
-			<< [data,im_val](){
-				(*im_val)=INFINITY;
-				SortedPoints<double> table;
-				for(size_t i=0;i<data->size();i++)
-					for(size_t j=i+1;j<data->size();j++){
-						double im=InvariantMass({data->operator[](i),data->operator[](j)});
-						double rest=0;
-						for(size_t k=0;k<data->size();k++)if((k!=i)&&(k!=j))
-							rest+=data->operator[](k).E;
-						table<<point<double>(rest,im);
-					}
-				if(table.size()>0)
-					if(table[0].X()<0.050)//noise threshold
-						(*im_val)=table[0].Y();
-				return true;
-			}
-			<< make_shared<SetOfHists1D>("CentralGammas","InvMass2Gamma",Q_axis(*res),Axis([im_val]()->double{return *im_val;},0.0,0.8,800))
-			<< make_shared<Hist1D>("CentralGammas","neutral_tracks_count",Axis([data]()->double{return data->size();},-0.5,9.5,10));
-	}
 	
-	Analysis* He3_X_analyse(He3Modification mode){
-		auto res=Prepare(mode);
+	void He3_X_analyse(Analysis&res){
+		res.Trigger(0).pre()<<make_shared<SetOfHists1D>(dir_v_name(),"MissingMass-vertex",Q_axis(res),MM_vertex(res));
+		res.Trigger(0).pre()<<make_shared<SetOfHists2D>(dir_v_name(),"Kinematic-vertex",Q_axis(res),Ev(res),Tv(res));
+		
 		auto trackcount=make_shared<long>(0);
-		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res))
+		res.Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(res))
 			<<[trackcount](){(*trackcount)=0;return true;};
-		res->Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
+		res.Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
 			<<[](WTrack&T)->bool{return T.Type()==kFDC;}
 			<<[trackcount](){(*trackcount)++;return true;}
-			<<ForwardReconstructionProcess(*res)
+			<<ForwardReconstructionProcess(res)
 			<<[](WTrack&T,const vector<double>&P)->bool{
 				return (Ek_GeV(T,P)<0.45)&&(Ek_GeV(T,P)>0.15)&&(Th_deg(T,P)<9.0);
 			}
-			<<He3MissingMass(*res)
-			<<He3KinematicHe3Test(*res)
+			<<He3MissingMass(res)
+			<<He3KinematicHe3Test(res)
 		);
-		res->Trigger(trigger_he3_forward.number).post()
+		res.Trigger(trigger_he3_forward.number).post()
 			<<make_shared<Hist1D>(
 				dir_dbg_name(),
 				"Forward_charged_tracks",
 				Axis([trackcount]()->double{return *trackcount;},-0.5,9.5,10)
 			);
-		SearchGammaTracks(res);
-		return res;
 	}
-	Analysis* He3_X_reconstruction(He3Modification mode){
-		auto res=Prepare(mode);
-		res->Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(*res));
-		res->Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
+	void He3_X_reconstruction(Analysis&res){
+		res.Trigger(trigger_he3_forward.number).pre()<<make_shared<Hist1D>(dir_r_name(),"0-Reference",Q_axis(res));
+		res.Trigger(trigger_he3_forward.number).per_track()<<(make_shared<ChainCheck>()
 			<<[](WTrack&T)->bool{return T.Type()==kFDC;}
-			<<ForwardReconstructionProcess(*res)
-			<<He3KinematicHe3Test(*res)
+			<<ForwardReconstructionProcess(res)
+			<<He3KinematicHe3Test(res)
 		);
-		return res;
 	}
 }
