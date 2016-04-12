@@ -9,11 +9,8 @@
 #include "trackprocessing.h"
 #include "detectors.h"
 #include "reconstruction.h"
-
 namespace ReactionSetup{
-	enum AnalysisModification{forData,forMC};
 	const Reaction&He3eta();
 	TrackAnalyse::Axis Q_axis(const Analysis&res);
-	Analysis*Prepare(const AnalysisModification mode);
 }
 #endif

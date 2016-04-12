@@ -4,6 +4,8 @@
 #include <SorterConfig.hh>
 #include <math_h/error.h>
 #include "analysis-setup.h"
+#include "data.h"
+#include "montecarlo.h"
 #include "prepare.h"
 #include "he3_X.h"
 #include "X_2gamma.h"
@@ -19,33 +21,29 @@ int main(int argc, char** argv) {
 	string type(argv[1]);
 	SetAnalysisType([type](){
 		Analysis* res=nullptr;
+		if("Data"==type)
+			res=new RealData();
+		else
+			res=new MonteCarlo();
 		if(
 			("RE_He3eta"==type)||
 			("RE_He3pi0"==type)||
 			("RE_He3pi0pi0"==type)||
 			("RE_He3pi0pi0pi0"==type)
 		){
-			res= Prepare(forMC);
 			He3_X_reconstruction(*res);;
 		}
 		if(
+			("Data"==type)||
 			("MC_He3eta"==type)||
 			("MC_He3pi0"==type)||
 			("MC_He3pi0pi0"==type)||
 			("MC_He3pi0pi0pi0"==type)
 		){
-			res= Prepare(forMC);
 			He3_X_analyse(*res);
 			SearchGammaTracks(*res);
 		}
-		if("Data_He3"==type){
-			res= Prepare(forData);
-			He3_X_analyse(*res);
-			SearchGammaTracks(*res);
-		}
-		if(nullptr==res)
-			throw Exception<Analysis*>("Cannot create analysis module");
-		else return res;
+		return res;
 	});
 	for(int i=1;i<=new_c;i++)
 		args[i]=argv[i+1];
