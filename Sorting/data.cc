@@ -17,5 +17,6 @@ bool RealData::DataTypeSpecificEventAnalysis()const{
 	return true;
 }
 bool RealData::DataSpecificTriggerCheck(int n)const{
+	if(0==n)return true;
 	return fHeader->TriggerNumSet(n);
 }

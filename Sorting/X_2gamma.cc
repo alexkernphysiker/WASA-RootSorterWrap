@@ -9,10 +9,10 @@ namespace ReactionSetup{
 	void SearchGammaTracks(Analysis&res){
 		auto data=make_shared<vector<particle_kinematics>>();
 		//ToDo: move this trigger number to experiment_conv.h
-		res.Trigger(29).pre()
+		res.Trigger(0).pre()
 			<< make_shared<Hist1D>("CentralGammas","0-Reference",Q_axis(res))
 			<< [data](){data->clear(); return true;};
-		res.Trigger(29).per_track()<<(make_shared<ChainCheck>()
+		res.Trigger(0).per_track()<<(make_shared<ChainCheck>()
 			<< [](WTrack&T)->bool{
 				return T.Type()==kCDN;
 			}
@@ -22,7 +22,7 @@ namespace ReactionSetup{
 			}
 		);
 		auto im_val=make_shared<double>(INFINITY);
-		res.Trigger(29).post() << (make_shared<ChainCheck>()
+		res.Trigger(0).post() << (make_shared<ChainCheck>()
 			<< [data,im_val](){
 				(*im_val)=INFINITY;
 				SortedPoints<double> table;
