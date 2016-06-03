@@ -130,7 +130,9 @@ namespace ReactionSetup{
 		<<make_shared<SetOfHists1D>(dir_r_name(),"MissingMass",Q_axis(data),MM_GeV);
 	}
 	shared_ptr<AbstractChain> He3KinematicHe3Test(const Analysis&data){
-		return make_shared<Chain>()<<make_shared<SetOfHists2D>(dir_r_name(),"Kinematic-reconstructed",Q_axis(data),Ek_GeV,Th_deg);
+		return make_shared<Chain>()
+			<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution",Q_axis(data),Phi_deg)
+			<<make_shared<SetOfHists2D>(dir_r_name(),"Kinematic-reconstructed",Q_axis(data),Ek_GeV,Th_deg);
 	}
 	
 	
