@@ -46,7 +46,7 @@ namespace ReactionSetup{
 		<<make_shared<Hist1D>(dir_r_name(),"1-AllTracks",Q_axis(data))
 		<<[](WTrack&T)->bool{return (T.Theta()!=0.125);}
 		<<make_shared<Parameter>([](WTrack&T)->double{return T.Theta()*180.0/PI();})
-		<<make_shared<Parameter>([](WTrack&T)->double{return T.Phi()*180.0/PI();})
+		<<make_shared<Parameter>([](WTrack&T)->double{return NormPhi(T.Phi())*180.0/PI();})
 		<<Forward::Get().CreateMarker(dir_r_name(),"2-FPC")<<make_shared<Hist1D>(dir_r_name(),"2-FPC",Q_axis(data))
 		<<(make_shared<ChainOr>()
 			<<(make_shared<ChainCheck>()
