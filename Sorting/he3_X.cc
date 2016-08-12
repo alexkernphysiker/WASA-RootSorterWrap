@@ -47,7 +47,7 @@ namespace ReactionSetup{
 		<<[](WTrack&T)->bool{return (T.Theta()!=0.125);}
 		<<make_shared<Parameter>([](WTrack&T)->double{return T.Theta()*180.0/PI();})
 		<<make_shared<Parameter>([](WTrack&T)->double{return NormPhi(T.Phi())*180.0/PI();})
-		<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution",Q_axis(data),Phi_deg)
+		<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution-before",Q_axis(data),Phi_deg)
 		<<Forward::Get().CreateMarker(dir_r_name(),"2-FPC")<<make_shared<Hist1D>(dir_r_name(),"2-FPC",Q_axis(data))
 		<<(make_shared<ChainOr>()
 			<<(make_shared<ChainCheck>()
@@ -132,6 +132,7 @@ namespace ReactionSetup{
 	}
 	shared_ptr<AbstractChain> He3KinematicHe3Test(const Analysis&data){
 		return make_shared<Chain>()
+			<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution-after",Q_axis(data),Phi_deg)
 			<<make_shared<SetOfHists2D>(dir_r_name(),"Kinematic-reconstructed",Q_axis(data),Ek_GeV,Th_deg);
 	}
 	
