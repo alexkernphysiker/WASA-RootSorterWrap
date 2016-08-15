@@ -43,11 +43,12 @@ namespace ReactionSetup{
 	shared_ptr<AbstractChain> ForwardReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dir_r_name(),"1-AllTracks")
+		<<make_shared<SetOfHists1D>(dir_dbg_name(),"1-PhiDistribution",Q_axis(data),Phi_deg)
 		<<make_shared<Hist1D>(dir_r_name(),"1-AllTracks",Q_axis(data))
 		<<[](WTrack&T)->bool{return (T.Theta()!=0.125);}
 		<<make_shared<Parameter>([](WTrack&T)->double{return T.Theta()*180.0/PI();})
 		<<make_shared<Parameter>([](WTrack&T)->double{return NormPhi(T.Phi())*180.0/PI();})
-		<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution-before",Q_axis(data),Phi_deg)
+		<<make_shared<SetOfHists1D>(dir_dbg_name(),"2-PhiDistribution",Q_axis(data),Phi_deg)
 		<<Forward::Get().CreateMarker(dir_r_name(),"2-FPC")<<make_shared<Hist1D>(dir_r_name(),"2-FPC",Q_axis(data))
 		<<(make_shared<ChainOr>()
 			<<(make_shared<ChainCheck>()
@@ -118,8 +119,10 @@ namespace ReactionSetup{
 				})	
 			)
 		)
+		<<make_shared<SetOfHists1D>(dir_dbg_name(),"3-PhiDistribution",Q_axis(data),Phi_deg)
 		<<Forward::Get().CreateMarker(dir_r_name(),"3-AllCuts")<<make_shared<Hist1D>(dir_r_name(),"3-AllCuts",Q_axis(data))
 		<<[](const vector<double>&P)->bool{return isfinite(P[0])&&isfinite(P[1])&&isfinite(P[2]);}
+		<<make_shared<SetOfHists1D>(dir_dbg_name(),"4-PhiDistribution",Q_axis(data),Phi_deg)
 		<<Forward::Get().CreateMarker(dir_r_name(),"4-Reconstructed")
 		<<make_shared<Hist1D>(dir_r_name(),"4-Reconstructed",Q_axis(data));
 	}
@@ -132,7 +135,6 @@ namespace ReactionSetup{
 	}
 	shared_ptr<AbstractChain> He3KinematicHe3Test(const Analysis&data){
 		return make_shared<Chain>()
-			<<make_shared<SetOfHists1D>(dir_dbg_name(),"PhiDistribution-after",Q_axis(data),Phi_deg)
 			<<make_shared<SetOfHists2D>(dir_r_name(),"Kinematic-reconstructed",Q_axis(data),Ek_GeV,Th_deg);
 	}
 	
