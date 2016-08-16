@@ -43,7 +43,7 @@ namespace ReactionSetup{
 	shared_ptr<AbstractChain> ForwardReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dir_r_name(),"1-AllTracks")
-		<<make_shared<SetOfHists1D>(dir_dbg_name(),"1-PhiDistribution",Q_axis(data),Phi_deg)
+		//<<make_shared<SetOfHists1D>(dir_dbg_name(),"1-PhiDistribution",Q_axis(data),Phi_deg)
 		<<make_shared<Hist1D>(dir_r_name(),"1-AllTracks",Q_axis(data))
 		<<[](WTrack&T)->bool{return (T.Theta()!=0.125);}
 		<<make_shared<Parameter>([](WTrack&T)->double{return T.Theta()*180.0/PI();})
