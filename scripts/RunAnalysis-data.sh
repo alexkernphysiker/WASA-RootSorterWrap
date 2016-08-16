@@ -16,7 +16,7 @@ for X in `seq 45873 1 46884`; do
 					chmod u+x ${scriptname}
 					qsub ${scriptname}
 					echo "${X} STARTED!!!"
-					sleep 2
+					sleep 3
 				else
 					echo "${X} is already running"
 				fi
