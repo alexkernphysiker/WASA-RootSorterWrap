@@ -1,10 +1,15 @@
 for X in `seq 45873 1 46884`; do
 	if [ -f ${RUNS_DATA}/run_${X} ]; then
-		if [ ! -f $PWD/../Sorting/Data_run_${X}.root ]; then
-			if [ `qstat|grep "R \|Q "|wc -l` -lt 60 ]; then
-				sleep 2
-				if [ `qstat|grep ${X} |wc -l` -lt 1 ]; then
-					sleep 2
+		if [ -f $PWD/../Sorting/Data_run_${X}.root ]; then
+			echo "${X} has been analyzed"
+		else
+
+			STAT=`qstat`
+			sleep 2
+
+			if [ `echo ${STAT}|grep "R \|Q "|wc -l` -lt 60 ]; then
+				if [ `echo ${STAT}|grep ${X} |wc -l` -lt 1 ]; then
+					echo "task is not running"
 					scriptname="run_${X}.sh"
 					rm -f ${scriptname}
 					echo "#!/bin/bash" >> ${scriptname}
@@ -16,9 +21,11 @@ for X in `seq 45873 1 46884`; do
 					echo >> ${scriptname}
 					echo "rm -f $PWD/${scriptname}" >> ${scriptname}
 					chmod u+x ${scriptname}
+
 					qsub ${scriptname}
-					echo "${X} STARTED!!!"
 					sleep 2
+
+					echo "${X} STARTED!!!"
 				else
 					echo "${X} is already running"
 				fi
@@ -26,12 +33,10 @@ for X in `seq 45873 1 46884`; do
 				echo "We have already enough jobs running for this reaction"
 				exit 0
 			fi
-		else
-			echo "${X} is finished already"
 		fi
 	else
 		echo "${X} not present"
 	fi
 done
-qstat
+echo "FINISHED"
 
