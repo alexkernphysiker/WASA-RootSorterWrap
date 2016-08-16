@@ -2,7 +2,9 @@ for X in `seq 45873 1 46884`; do
 	if [ -f ${RUNS_DATA}/run_${X} ]; then
 		if [ ! -f $PWD/../Sorting/Data_run_${X}.root ]; then
 			if [ `qstat|grep "R \|Q "|wc -l` -lt 60 ]; then
+				sleep 2
 				if [ `qstat|grep ${X} |wc -l` -lt 1 ]; then
+					sleep 2
 					scriptname="run_${X}.sh"
 					rm -f ${scriptname}
 					echo "#!/bin/bash" >> ${scriptname}
@@ -16,7 +18,7 @@ for X in `seq 45873 1 46884`; do
 					chmod u+x ${scriptname}
 					qsub ${scriptname}
 					echo "${X} STARTED!!!"
-					sleep 3
+					sleep 2
 				else
 					echo "${X} is already running"
 				fi
