@@ -1,7 +1,9 @@
 for X in `seq 45873 1 46884`; do
-	if [ -f ${RUNS_DATA}/run_${X} ]; then
-		if [ -f $PWD/../Sorting/Data_run_${X}.root ]; then
-			echo "${X} has been analyzed"
+	echo "run #${X}..."
+	if [ -e ${RUNS_DATA}/run_${X} ]; then
+		echo "...present"
+		if [ -e $PWD/../Sorting/Data_run_${X}.root ]; then
+			echo "...has been analyzed"
 		else
 
 			STAT=`qstat`
@@ -25,9 +27,9 @@ for X in `seq 45873 1 46884`; do
 					qsub ${scriptname}
 					sleep 2
 
-					echo "${X} STARTED!!!"
+					echo "... analysis STARTED!!!"
 				else
-					echo "${X} is already running"
+					echo "... analysis is already running"
 				fi
 			else
 				echo "We have already enough jobs running for this reaction"
@@ -35,7 +37,7 @@ for X in `seq 45873 1 46884`; do
 			fi
 		fi
 	else
-		echo "${X} not present"
+		echo "...not present"
 	fi
 done
 echo "FINISHED"
