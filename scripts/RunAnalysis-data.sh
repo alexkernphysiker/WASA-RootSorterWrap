@@ -5,13 +5,9 @@ for X in `seq 45873 1 46884`; do
 		if [ -e $PWD/../Sorting/Data_run_${X}.root ]; then
 			echo "...has been analyzed"
 		else
-
-			STAT=`qstat`
-			sleep 2
-
-			if [ `echo ${STAT}|grep "R \|Q "|wc -l` -lt 60 ]; then
-				if [ `echo ${STAT}|grep ${X} |wc -l` -lt 1 ]; then
-					echo "task is not running"
+			if [ `qstat|grep "R \|Q "|wc -l` -lt 40 ]; then
+				if [ `qstat|grep ${X} |wc -l` -lt 1 ]; then
+					echo "...starting..."
 					scriptname="run_${X}.sh"
 					rm -f ${scriptname}
 					echo "#!/bin/bash" >> ${scriptname}
@@ -27,7 +23,6 @@ for X in `seq 45873 1 46884`; do
 					qsub ${scriptname}
 					sleep 2
 
-					echo "... analysis STARTED!!!"
 				else
 					echo "... analysis is already running"
 				fi
