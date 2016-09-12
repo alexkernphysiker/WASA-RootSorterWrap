@@ -56,10 +56,11 @@ namespace ReactionSetup{
 				<<[](WTrack&T)->bool{
 					static TCutG *cut=nullptr;
 					if(cut==nullptr){
-						cut=new TCutG("FRH1_cut",15);
+						cut=new TCutG("FRH1_cut",16);
 						cut->SetVarX("FRH1");
 						cut->SetVarY("FTH1");
-						cut->SetPoint(15,0.019,0.025);
+						cut->SetPoint(16,0.018,0.025);
+						cut->SetPoint(15,0.019,0.030);
 						cut->SetPoint(14,0.069,0.021);
 						cut->SetPoint(13,0.121,0.018);
 						cut->SetPoint(12,0.162,0.016);
@@ -73,7 +74,7 @@ namespace ReactionSetup{
 						cut->SetPoint(4,0.105,0.012);
 						cut->SetPoint(3,0.061,0.016);
 						cut->SetPoint(2,0.027,0.020);
-						cut->SetPoint(1,0.019,0.025);
+						cut->SetPoint(1,0.018,0.025);
 					}
 					double x=Forward::Get()[kFRH1].Edep(T);
 					double y=Forward::Get()[kFTH1].Edep(T);
