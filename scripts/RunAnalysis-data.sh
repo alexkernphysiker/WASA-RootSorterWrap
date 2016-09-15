@@ -5,7 +5,7 @@ for X in `seq 45873 1 46884`; do
 		if [ -e $PWD/../Sorting/Data_run_${X}.root ]; then
 			echo "...has been analyzed"
 		else
-			if [ `qstat|grep "R \|Q "|wc -l` -lt 40 ]; then
+			if [ `qstat|grep "R \|Q "|wc -l` -lt 80 ]; then
 				if [ `qstat|grep ${X} |wc -l` -lt 1 ]; then
 					echo "...starting..."
 					scriptname="run_${X}.sh"
