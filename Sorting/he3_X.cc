@@ -67,11 +67,11 @@ namespace ReactionSetup{
 						cut->SetPoint(12,0.162,0.016);
 						cut->SetPoint(11,0.206,0.015);
 						cut->SetPoint(10,0.304,0.014);
-						cut->SetPoint(9,0.4,0.014);
-						cut->SetPoint(8,0.4,0.007);
-						cut->SetPoint(7,0.298,0.007);
-						cut->SetPoint(6,0.201,0.009);
-						cut->SetPoint(5,0.141,0.011);
+						cut->SetPoint(9,0.35,0.014);
+						cut->SetPoint(8,0.35,0.006);
+						cut->SetPoint(7,0.298,0.006);
+						cut->SetPoint(6,0.201,0.007);
+						cut->SetPoint(5,0.141,0.009);
 						cut->SetPoint(4,0.105,0.012);
 						cut->SetPoint(3,0.061,0.016);
 						cut->SetPoint(2,0.027,0.020);
