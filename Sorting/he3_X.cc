@@ -7,7 +7,7 @@
 #include "data.h"
 #include "he3_X.h"
 namespace ReactionSetup{
-	const double he3_forward_correct_energy=0.018;
+	const double he3_forward_correct_energy=0.017;
 	using namespace std;
 	using namespace MathTemplates;
 	using namespace TrackAnalyse;
