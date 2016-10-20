@@ -10,4 +10,5 @@ Sorter.MCFilterSEHits.PhePerMeV: 0.06
 Sorter.MagneticField: 10.
 Sorter.FD.FTHTrack.JustPhiTrack: true
 Sorter.FD.FTHTrack.UseEnergyRecalibration: true
-
+Sorter.FD.FTHTrack.UseFPCVH:        true
+Sorter.FD.FTHTrack.UseFPCSimple:    false
