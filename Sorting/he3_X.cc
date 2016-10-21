@@ -7,7 +7,6 @@
 #include "data.h"
 #include "he3_X.h"
 namespace ReactionSetup{
-	const double he3_forward_correct_energy=0.017;
 	using namespace std;
 	using namespace MathTemplates;
 	using namespace TrackAnalyse;
@@ -91,10 +90,7 @@ namespace ReactionSetup{
 							return INFINITY;
 						}
 					);
-					double e=energy(track);
-					if(dynamic_cast<const RealData*>(&data))
-						e+=he3_forward_correct_energy;
-					return e;
+					return energy(track);
 				})
 			)
 			<<(make_shared<ChainCheck>()
@@ -114,10 +110,7 @@ namespace ReactionSetup{
 							return INFINITY;
 						}
 					);
-					double e=energy(track);
-					if(dynamic_cast<const RealData*>(&data))
-						e+=he3_forward_correct_energy;
-					return e;
+					return energy(track);
 				})	
 			)
 		)
