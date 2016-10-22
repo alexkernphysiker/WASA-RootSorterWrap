@@ -5,7 +5,7 @@
 #include "data.h"
 #include "reconstruction.h"
 using namespace std;
-const double pbeam_measurement_offset=0.006;
+const double pbeam_measurement_offset=0.005;
 RealData::RealData()
 :BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;})
 {

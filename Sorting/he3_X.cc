@@ -7,6 +7,7 @@
 #include "data.h"
 #include "he3_X.h"
 namespace ReactionSetup{
+	const double e_corr=0.005;
 	using namespace std;
 	using namespace MathTemplates;
 	using namespace TrackAnalyse;
@@ -90,7 +91,7 @@ namespace ReactionSetup{
 							return INFINITY;
 						}
 					);
-					return energy(track);
+					return energy(track)+(dynamic_cast<const RealData*>(&data)?e_corr:0.0);
 				})
 			)
 			<<(make_shared<ChainCheck>()
@@ -110,7 +111,7 @@ namespace ReactionSetup{
 							return INFINITY;
 						}
 					);
-					return energy(track);
+					return energy(track)+(dynamic_cast<const RealData*>(&data)?e_corr:0.0);
 				})	
 			)
 		)
