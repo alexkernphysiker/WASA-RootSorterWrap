@@ -7,7 +7,7 @@
 #include "data.h"
 #include "he3_X.h"
 namespace ReactionSetup{
-	const double e_corr=0.005;
+	const double e_corr=0.010;
 	using namespace std;
 	using namespace MathTemplates;
 	using namespace TrackAnalyse;
