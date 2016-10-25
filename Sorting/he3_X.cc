@@ -7,7 +7,7 @@
 #include "data.h"
 #include "he3_X.h"
 namespace ReactionSetup{
-	const double e_corr=0.010;
+	const double e_corr=0.008;
 	using namespace std;
 	using namespace MathTemplates;
 	using namespace TrackAnalyse;
@@ -44,7 +44,6 @@ namespace ReactionSetup{
 	shared_ptr<AbstractChain> ForwardReconstructionProcess(const Analysis&data){
 		return make_shared<ChainCheck>()
 		<<Forward::Get().CreateMarker(dir_r_name(),"1-AllTracks")
-		//<<make_shared<SetOfHists1D>(dir_dbg_name(),"1-PhiDistribution",Q_axis(data),Phi_deg)
 		<<make_shared<Hist1D>(dir_r_name(),"1-AllTracks",Q_axis(data))
 		<<[](WTrack&T)->bool{return (T.Theta()!=0.125);}
 		<<make_shared<Parameter>([](WTrack&T)->double{return T.Theta()*180.0/PI();})
@@ -72,9 +71,9 @@ namespace ReactionSetup{
 						cut->SetPoint(7,0.298,0.006);
 						cut->SetPoint(6,0.201,0.007);
 						cut->SetPoint(5,0.141,0.009);
-						cut->SetPoint(4,0.105,0.010);
-						cut->SetPoint(3,0.061,0.015);
-						cut->SetPoint(2,0.027,0.017);
+						cut->SetPoint(4,0.105,0.011);
+						cut->SetPoint(3,0.061,0.014);
+						cut->SetPoint(2,0.027,0.019);
 						cut->SetPoint(1,0.018,0.025);
 					}
 					double x=Forward::Get()[kFRH1].Edep(T);
@@ -95,6 +94,7 @@ namespace ReactionSetup{
 				})
 			)
 			<<(make_shared<ChainCheck>()
+				<<[](WTrack&T)->bool{return false;}//if I need FRH2 I'll delete this line
 				<<[](WTrack&T)->bool{return Forward::Get().StoppingLayer(T)==kFRH2;}
 				<<[](WTrack&T)->bool{
 					if(Forward::Get()[kFRH2].Edep(T)>0.22)return false;

@@ -7,8 +7,7 @@
 using namespace std;
 const double pbeam_measurement_offset=0.005;
 RealData::RealData()
-:BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;})
-{
+:BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;}){
 	fHeader = dynamic_cast<REventHeader*>(gDataManager->GetDataObject("REventHeader","Header"));
 }
 RealData::~RealData(){}
