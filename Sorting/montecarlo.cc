@@ -12,7 +12,7 @@ enum ParticleType{
 	kDDummy=50
 };
 map<ParticleType,Particle> dictionary;
-MonteCarlo::MonteCarlo():Analysis(){
+MonteCarlo::MonteCarlo(const bool kostyl):Analysis(),f_kostyl(kostyl){
 	WTrackFinder *MCTrf = dynamic_cast<WTrackFinder*>(gDataManager->GetAnalysisModule("MCTrackFinder","default"));
 	fMCTrackBank  = MCTrf->GetTrackBank();
 	fMCVertexBank = MCTrf->GetVertexBank();
@@ -36,7 +36,7 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 	){
 		ClearVerticesCache();
 		WVertexIter iterator(fMCVertexBank);
-		if(dynamic_cast<WVertex*>(iterator.Next()))
+		if((!f_kostyl)||(dynamic_cast<WVertex*>(iterator.Next())))
 			while(WVertex *vertex=dynamic_cast<WVertex*>(iterator.Next())){
 				vector<Kinematic> vertex_rec;
 				for(int particleindex=0; particleindex<vertex->NumberOfParticles(); particleindex++){

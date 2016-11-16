@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 		if("Data"==type)
 			res=new RealData();
 		else
-			res=new MonteCarlo();
+			res=new MonteCarlo(true);
 		if(
 			("RE_He3eta"==type)||
 			("RE_He3pi0"==type)||
