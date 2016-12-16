@@ -1,5 +1,5 @@
 for X in `seq 1 1 20`; do
-    scriptname="run_wmc-$X.sh"
+    scriptname="run_wmc-$1-$X.sh"
     rm -f ${scriptname}
     echo "#!/bin/bash" >> ${scriptname}
     echo "#PBS -N WMC_$1-$X" >> ${scriptname}
@@ -12,5 +12,6 @@ for X in `seq 1 1 20`; do
     chmod u+x ${scriptname}
     qsub ${scriptname}
     echo "${scriptname} generated and executed"
+    sleep 5
 done
 qstat
