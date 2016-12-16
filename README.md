@@ -83,34 +83,28 @@ Here you can run scripts:
 
 For WMC. (Pluto running application from submodule must have created the files)
 
-    ./RunWMC <reaction>
+    ./QueueWMC <reaction>
 
 For running analysis of the results of WMC work. If reconstruction fits have not been performed
 
-    ./RunReconstructionSimulation.sh <reaction>
+    ./QueueReconstructionSimulation.sh <reaction>
 
 This will create in DataFiles/ directory text files that can be used by fit algorithm
     
     
 For running analysis of the results of WMC work. Applying working preselection algorithm.
 
-    ./RunAnalysis-mc.sh <reaction>
+    ./QueueAnalysis-mc.sh <reaction>
 
 For running analysis of 50 new existing runs of data
 
-    ./RunAnalysis-data.sh <reaction>
+    ./QueueAnalysis-data.sh
     
 
 List of implemented reactions
 =============================
 
-For Monte Carlo
-
     He3eta
     He3pi0
     He3pi0pi0
     He3pi0pi0pi0
-    
-For data
-
-    He3
