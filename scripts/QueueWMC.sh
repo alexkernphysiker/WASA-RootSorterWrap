@@ -1,4 +1,4 @@
-for X in `seq 1 1 20`; do
+for X in `seq 1 1 50`; do
     scriptname="run_wmc-$1-$X.sh"
     rm -f ${scriptname}
     echo "#!/bin/bash" >> ${scriptname}
