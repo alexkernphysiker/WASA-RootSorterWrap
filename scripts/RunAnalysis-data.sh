@@ -10,7 +10,7 @@ for X in `seq 45873 1 46884`; do
 			rm -f ${scriptname}
 			echo "#!/bin/bash" >> ${scriptname}
 			echo "cd $PWD/../Sorting" >> ${scriptname}
-			echo "./main Data -fin cluster:${RUNS_DATA}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort " >> ${scriptname}
+			echo "./main Data -local -fin cluster:${RUNS_DATA}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort " >> ${scriptname}
 			echo >> ${scriptname}
 			echo "rm -f $PWD/${scriptname}" >> ${scriptname}
 			chmod u+x ${scriptname}
