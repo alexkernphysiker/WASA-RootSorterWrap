@@ -4,7 +4,14 @@
 #include <TCutG.h>
 #include "math_h/functions.h"
 #include "math_h/tabledata.h"
+#include "ReconstructionFit/reconstruction_types.h"
+#include "Experiment/experiment_conv.h"
+#include "Kinematics/reactions.h"
+#include "trackprocessing.h"
+#include "detectors.h"
+#include "reconstruction.h"
 #include "data.h"
+
 #include "reactions_rundel.h"
 namespace Rundel{
 	const double e_corr=0.009;
