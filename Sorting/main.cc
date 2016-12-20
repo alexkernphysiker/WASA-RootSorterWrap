@@ -6,13 +6,11 @@
 #include "analysis-setup.h"
 #include "data.h"
 #include "montecarlo.h"
-#include "prepare.h"
-#include "he3_X.h"
-#include "X_2gamma.h"
+#include "reactions_rundel.h"
+#include "reactions_khreptak.h"
 #include "example.h"
 using namespace std;
 using namespace MathTemplates;
-using namespace ReactionSetup;
 int main(int argc, char** argv) {
     if(argc<2)
 	return -1;
@@ -32,7 +30,7 @@ int main(int argc, char** argv) {
 	    ("RE_He3pi0pi0"==type)||
 	    ("RE_He3pi0pi0pi0"==type)
 	){
-	    He3_X_reconstruction(*res);;
+	    Rundel::He3_X_reconstruction(*res);;
 	}
 	if(
 	    ("Data"==type)||
@@ -41,14 +39,20 @@ int main(int argc, char** argv) {
 	    ("MC_He3pi0pi0"==type)||
 	    ("MC_He3pi0pi0pi0"==type)
 	){
-	    He3_X_analyse(*res);
-	    SearchGammaTracks(*res);
+	    Rundel::He3_X_analyse(*res);
+	    Rundel::SearchGammaTracks(*res);
 	}
 	if(
 	    ("MC_EXAMPLE"==type)||
 	    ("Data_EXAMPLE"==type)
 	){
-	    prepare_example_analyse(*res);;
+	    prepare_example_analyse(*res);
+	}
+	if(
+	    ("MC_ppn_sp"==type)||
+	    ("Data_ppn_sp"==type)
+	){
+	    //ToDo: setup
 	}
 	return res;
     });

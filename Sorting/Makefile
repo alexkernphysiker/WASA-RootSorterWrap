@@ -1,11 +1,10 @@
 BASEDIR = $(ROOTSORTERSYS)/core
 TARGET   = main
 MODULES  =  \
-	analysismodule analysis montecarlo data \
+	analysismodule \
 	Genetic/paramset Kinematics/particles Kinematics/reactions \
-	trackprocessing detectors prepare \
-	example \
-	he3_X X_2gamma
+	analysis montecarlo data trackprocessing detectors\
+	example reactions_rundel reactions_khreptak
 DICTMODULES = analysismodule
 
 CPPFLAGS := `$(BASEDIR)/bin/sorter-config -cpp` -g
