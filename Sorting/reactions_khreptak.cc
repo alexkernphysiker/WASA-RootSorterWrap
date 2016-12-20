@@ -22,8 +22,6 @@ namespace Khreptak{
     void SetupForPPNsp(Analysis&res){
 	auto count_ch_CD=make_shared<size_t>(0);
         auto count_ch_FD=make_shared<size_t>(0);
-        auto count_compl=make_shared<size_t>(0);
-
         auto Theta=make_shared<vector<double>>();
         auto Phi=make_shared<vector<double>>();
 
@@ -49,23 +47,22 @@ namespace Khreptak{
 		return true;
 	    };
 
-        res.Trigger(0).post()
-// 	    <<[Theta, Phi,count_compl](){
-// 		(*count_compl)=0;
-// 		vector<Vector3<double>> P;
-// 		for(size_t i=0; i<Theta->size(); i++){
-// 		    P.push_back(Vector3<double>::Polar(1, Theta->operator[](i), Phi->operator[](i)));
-// 		}
-// 		for(size_t i=0; i<P.size(); i++){
-// 		    for(size_t j=i+1; j<P.size(); j++){
-// 			const double compl=(Vector3<double>::basis_z().VecP(P[i])*P[j]);
-// 			if(pow(compl,2)<0.01){
-// 			    (*count_compl)++;
-// 			}
-// 		    }
-// 		}
-// 		return true;//!!!!!!
-// 	    }
+        auto count_compl=make_shared<size_t>(0);
+	res.Trigger(0).post()
+	    <<[Theta,Phi,count_compl]()->bool{
+		(*count_compl)=0;
+		vector<Vector3<double>> P;
+		for(size_t i=0; i<Theta->size(); i++){
+		    P.push_back(Vector3<double>::Polar(1, Theta->operator[](i), Phi->operator[](i)));
+		}
+		for(size_t i=0; i<P.size(); i++){
+		    for(size_t j=i+1; j<P.size(); j++){
+			if(pow(Vector3<double>::basis_z().VecP(P[i])*P[j],2)<0.01)
+			    (*count_compl)++;
+		    }
+		}
+		return true;//!!!!!!
+	    }
 
 	    <<make_shared<Hist1D>("ppn","ChargedCentral",Axis([count_ch_CD]()->double{return *count_ch_CD;},-0.5,9.5,10))
 	    <<make_shared<Hist1D>("ppn","ChargedForward",Axis([count_ch_FD]()->double{return *count_ch_FD;},-0.5,9.5,10))
