@@ -25,6 +25,9 @@ namespace Khreptak{
         auto Theta=make_shared<vector<double>>();
         auto Phi=make_shared<vector<double>>();
 
+	//also pay attention at trigges number
+	// for Monte Carlo it will work with any,
+	// but for data you must choose the one
         res.Trigger(0).pre()
 	    <<[count_ch_CD,count_ch_FD,Theta,Phi]()->bool{
 		(*count_ch_CD)=0;
@@ -41,8 +44,8 @@ namespace Khreptak{
 		if (T.Type()==kFDC)
 		    (*count_ch_FD)++;
 		if ((T.Type()==kCDC) || (T.Type()==kFDC)){
-		    Theta->push_back(T.Theta());//!!!!
-		    Phi->push_back(T.Phi());//!!!!
+		    Theta->push_back(T.Theta());//!!!! methods names were incorrect
+		    Phi->push_back(T.Phi());//!!!! and also were used without brackets
 		}
 		return true;
 	    };
@@ -57,11 +60,12 @@ namespace Khreptak{
 		}
 		for(size_t i=0; i<P.size(); i++){
 		    for(size_t j=i+1; j<P.size(); j++){
+			//name compl is used somewhere else
 			if(pow(Vector3<double>::basis_z().VecP(P[i])*P[j],2)<0.01)
 			    (*count_compl)++;
 		    }
 		}
-		return true;//!!!!!!
+		return true;//!!!! all these function must return bool
 	    }
 
 	    <<make_shared<Hist1D>("ppn","ChargedCentral",Axis([count_ch_CD]()->double{return *count_ch_CD;},-0.5,9.5,10))
