@@ -4,5 +4,6 @@
 #	define ___________khreptak__h_____
 #include "analysis.h"
 namespace Khreptak{
+    void SetupForPPNsp(Analysis&res);
 }
 #endif

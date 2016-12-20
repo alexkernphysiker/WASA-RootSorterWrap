@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 	    ("MC_ppn_sp"==type)||
 	    ("Data_ppn_sp"==type)
 	){
-	    //ToDo: setup
+	    Khreptak::SetupForPPNsp(*res);
 	}
 	return res;
     });
