@@ -1,11 +1,16 @@
 BASEDIR = $(ROOTSORTERSYS)/core
 TARGET   = main
-MODULES  =  Genetic/paramset Kinematics/particles Kinematics/reactions trackprocessing detectors analysis montecarlo data analysismodule prepare he3_X X_2gamma
+MODULES  =  \
+	analysismodule analysis montecarlo data \
+	Genetic/paramset Kinematics/particles Kinematics/reactions \
+	trackprocessing detectors prepare \
+	example \
+	he3_X X_2gamma
 DICTMODULES = analysismodule
 
-CPPFLAGS := `$(BASEDIR)/bin/sorter-config -cpp` -g  
+CPPFLAGS := `$(BASEDIR)/bin/sorter-config -cpp` -g
 CXXFLAGS := `$(BASEDIR)/bin/sorter-config -cxx` -fno-strict-aliasing  -g -std=c++11
-LDFLAGS  := `$(BASEDIR)/bin/sorter-config -ld -libs-wasa -libs-wasa-ana` -lWasaRecFD -lWasaRecSE -lWasaRecPS -lWasaRecMDC -lWasaRecCD -lWasaParameter -lWasaAnaRaw -lWasaRecFPC -lvt -g 
+LDFLAGS  := `$(BASEDIR)/bin/sorter-config -ld -libs-wasa -libs-wasa-ana` -lWasaRecFD -lWasaRecSE -lWasaRecPS -lWasaRecMDC -lWasaRecCD -lWasaParameter -lWasaAnaRaw -lWasaRecFPC -lvt -g
 
 all: $(TARGET)
 
