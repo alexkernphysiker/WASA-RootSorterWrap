@@ -49,8 +49,8 @@ int main(int argc, char** argv) {
 	    prepare_example_analyse(*res);
 	}
 	if(
-	    ("MC_ppn_sp"==type)||
-	    ("Data_ppn_sp"==type)
+	    ("MC_ppn"==type)||
+	    ("Data_ppn"==type)
 	){
 	    Khreptak::SetupForPPNsp(*res);
 	}
