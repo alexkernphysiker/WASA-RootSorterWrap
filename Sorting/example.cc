@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include <Wasa.hh>
 #include <TCutG.h>
 #include "math_h/functions.h"

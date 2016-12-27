@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include <functional>
 #include "analysismodule.hh"
 #include "analysis-setup.h"

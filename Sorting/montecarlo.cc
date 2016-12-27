@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include <map>
 #include "math_h/vectors.h"
 #include "Kinematics/particles.h"

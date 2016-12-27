@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include <vector>
 #include <utility>
 #include "math_h/error.h"

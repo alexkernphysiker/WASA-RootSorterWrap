@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include <Wasa.hh>
 #include <SorterConfig.hh>
 #include <math_h/error.h>

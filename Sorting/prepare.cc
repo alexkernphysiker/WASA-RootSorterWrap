@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include "prepare.h"
 namespace ReactionSetup{
 	using namespace TrackAnalyse;

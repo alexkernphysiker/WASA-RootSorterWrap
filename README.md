@@ -1,6 +1,7 @@
 WASA Preselection
 =================
 Sources of my software for preselection of data obtained from the experiment WASA-at-COSY on searching eta-mesic 3He in May 2014.
+All files are distributed under GPL license
 
 
 

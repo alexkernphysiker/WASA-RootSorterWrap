@@ -1,3 +1,5 @@
+// this file is distributed under 
+// GPL license
 #include <Wasa.hh>
 #include <TCutG.h>
 #include <vector>

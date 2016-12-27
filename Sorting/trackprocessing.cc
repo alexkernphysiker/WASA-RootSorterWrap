@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #include "TH1F.h"
 #include "TH2F.h"
 #include <TLorentzVector.h>

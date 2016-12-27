@@ -1,5 +1,5 @@
 // this file is distributed under 
-// MIT license
+// GPL license
 #ifndef oVonXYZj
 #define oVonXYZj
 #include "analysis.h"
