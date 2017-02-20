@@ -12,7 +12,7 @@
 #include <Genetic/paramfunc.h>
 #include <config.h>
 #include "analysis.h"
-const std::string DataFiles=std::string("./")+DataDirectoryName+"/";
+const std::string DataFiles="./WASA-RootSorterWrap/DataFiles/";
 template<typename... Args>
 class InterpolationBasedReconstruction{
 public:
