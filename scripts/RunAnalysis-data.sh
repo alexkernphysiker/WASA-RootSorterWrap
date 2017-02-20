@@ -1,6 +1,6 @@
 for X in `seq 45873 1 46884`; do
 	echo "run #${X}..."
-	if [ -e ${RUNS_DATA}/run_${X} ]; then
+	if [ -e ${RUNS_DATA}/run_${X}.xz ]; then
 		echo "...present"
 		if [ -e $PWD/../Sorting/Data_run_${X}.root ]; then
 			echo "...has been analyzed"
@@ -12,7 +12,10 @@ for X in `seq 45873 1 46884`; do
 				echo "...starting..."
 				echo "#!/bin/bash" >> ${scriptname}
 				echo "cd $PWD/../Sorting" >> ${scriptname}
-				echo "./main Data -local -fin cluster:${RUNS_DATA}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort" >> ${scriptname}
+				echo "rm -f ${RUNS_TMP}/run_${X}" >> ${scriptname}
+				echo "xzcat ${RUNS_DATA}/run_${X}.xz > ${RUNS_TMP}/run_${X}" >> ${scriptname}
+				echo "./main Data -local -fin cluster:${RUNS_TMP}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort" >> ${scriptname}
+				echo "rm -f ${RUNS_TMP}/run_${X}" >> ${scriptname}
 				echo >> ${scriptname}
 				echo "rm -f $PWD/${scriptname}" >> ${scriptname}
 				chmod u+x ${scriptname}
