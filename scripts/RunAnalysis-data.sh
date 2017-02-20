@@ -5,16 +5,19 @@ for X in `seq 45873 1 46884`; do
 		if [ -e $PWD/../Sorting/Data_run_${X}.root ]; then
 			echo "...has been analyzed"
 		else
-			echo "...starting..."
 			scriptname="run_${X}.sh"
-			rm -f ${scriptname}
-			echo "#!/bin/bash" >> ${scriptname}
-			echo "cd $PWD/../Sorting" >> ${scriptname}
-			echo "./main Data -local -fin cluster:${RUNS_DATA}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort " >> ${scriptname}
-			echo >> ${scriptname}
-			echo "rm -f $PWD/${scriptname}" >> ${scriptname}
-			chmod u+x ${scriptname}
-			./${scriptname}
+			if [ -e ${scriptname} ]; then
+				echo "...already in process"
+			else
+				echo "...starting..."
+				echo "#!/bin/bash" >> ${scriptname}
+				echo "cd $PWD/../Sorting" >> ${scriptname}
+				echo "./main Data -local -fin cluster:${RUNS_DATA}/run_${X} -r ${X} -n Data_run_${X} -lf run_${X}.log -abort" >> ${scriptname}
+				echo >> ${scriptname}
+				echo "rm -f $PWD/${scriptname}" >> ${scriptname}
+				chmod u+x ${scriptname}
+				./${scriptname}
+			fi
 		fi
 	else
 		echo "...not present"
