@@ -63,7 +63,7 @@ namespace TrackAnalyse{
 	
 	class Hist1D:public ITrackParamAnalyse{
 	public:
-		Hist1D(const std::string&&dir,const std::string&&name,const Axis&x);
+		Hist1D(const std::string&dir,const std::string&name,const Axis&x);
 		virtual ~Hist1D();
 	protected:
 		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
@@ -73,7 +73,7 @@ namespace TrackAnalyse{
 	};
 	class SetOfHists1D:public ITrackParamAnalyse{
 	public:
-		SetOfHists1D(const std::string&&dir,const std::string&&name,const Axis&binning,const Axis&x);
+		SetOfHists1D(const std::string&dir,const std::string&name,const Axis&binning,const Axis&x);
 		virtual ~SetOfHists1D();
 	protected:
 		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
@@ -85,7 +85,7 @@ namespace TrackAnalyse{
 
 	class Hist2D:public ITrackParamAnalyse{
 	public:
-		Hist2D(const std::string&&dir,const std::string&&name,const Axis&x,const Axis&y);
+		Hist2D(const std::string&dir,const std::string&name,const Axis&x,const Axis&y);
 		virtual ~Hist2D();
 	protected:
 		virtual void Analyse(WTrack&,const std::vector<double>&)const override;
@@ -95,7 +95,7 @@ namespace TrackAnalyse{
 	};
 	class SetOfHists2D:public ITrackParamAnalyse{
 	public:
-		SetOfHists2D(const std::string&&dir,const std::string&&name,const Axis&binning,const Axis&x,const Axis&y);
+		SetOfHists2D(const std::string&dir,const std::string&name,const Axis&binning,const Axis&x,const Axis&y);
 		virtual ~SetOfHists2D();
 	protected:
 		virtual void Analyse(WTrack&,const std::vector<double>&)const override;

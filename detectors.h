@@ -21,7 +21,7 @@ namespace TrackAnalyse{
 		class plane_data{
 			friend class Forward;
 		public:
-			plane_data(ForwardDetectorPlane p,const std::string&&n,double thr,double upper);
+			plane_data(ForwardDetectorPlane p,const std::string&n,double thr,double upper);
 			~plane_data();
 			double Edep(WTrack&)const;
 		protected:
@@ -43,7 +43,7 @@ namespace TrackAnalyse{
 		size_t count()const;
 		const plane_data&operator[](ForwardDetectorPlane)const;
 		ForwardDetectorPlane StoppingLayer(WTrack&)const;
-		std::shared_ptr<Chain> CreateMarker(const std::string&&dir,const std::string&&name)const;
+		std::shared_ptr<Chain> CreateMarker(const std::string&dir,const std::string&name)const;
 	private:
 		std::vector<plane_data> PlaneData;
 	};

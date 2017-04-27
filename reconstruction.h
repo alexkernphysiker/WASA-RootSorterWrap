@@ -23,7 +23,7 @@ private:
 	std::shared_ptr<std::vector<MathTemplates::point<double>>> out;
 	FUNC Experiment,Theory;
 public:
-	InterpolationBasedReconstruction(const std::string&&name,const FUNC measured,const FUNC theory){
+	InterpolationBasedReconstruction(const std::string&name,const FUNC measured,const FUNC theory){
 		out=std::make_shared<std::vector<MathTemplates::point<double,double>>>();
 		m_name=name;
 		Experiment=measured;
@@ -84,7 +84,7 @@ private:
 	Genetic::ParamSet P;
 	std::shared_ptr<std::vector<Genetic::ParamSet>> data;
 public:
-	FitBasedReconstruction(const std::string&&name,const std::vector<FUNC>&&measured,const FUNC theory){
+	FitBasedReconstruction(const std::string&name,const std::vector<FUNC>&&measured,const FUNC theory){
 		using namespace Genetic;
 		m_name=name;
 		Theory=theory;
