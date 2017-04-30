@@ -14,8 +14,7 @@ namespace TrackAnalyse {
 	const string& Forward::plane_data::name() const{return m_name;}
 	double Forward::plane_data::threshold() const{return m_thr;}
 	double Forward::plane_data::Edep(WTrack&T) const{
-		vector<double> P;
-		return m_axis(T,P);
+		return m_axis(T);
 	}
 	
 	Forward::Forward(){
