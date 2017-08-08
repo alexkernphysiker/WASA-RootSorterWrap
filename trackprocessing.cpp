@@ -213,9 +213,7 @@ namespace TrackAnalyse{
 	}
 	bool EventProcess::Process() const{
 		WTrack T;
-		for(auto proc:m_proc)
-			if(!proc->Process(T))
-				return false;
+		for(auto proc:m_proc)proc->Process(T);
 		return true;
 	}
 }
