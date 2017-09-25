@@ -51,9 +51,9 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 				}
 				CacheVertex(vertex_rec);
 			}
-		auto P=Vector3<double>::zero();
+		auto P=Zero<>();
 		for(const Kinematic&item:Vertex(0))
-			P+=Vector3<double>::Polar(item.particle.E2P(item.E),item.Th,item.Phi);
+			P+=PolarCoordinates(item.particle.E2P(item.E),item.Th,item.Phi);
 		CachePBeam(P.mag());
 		return true;
 	}
