@@ -53,7 +53,7 @@ bool MonteCarlo::DataTypeSpecificEventAnalysis()const{
 			}
 		auto P=Zero<>();
 		for(const Kinematic&item:Vertex(0))
-			P+=PolarCoordinates(item.particle.E2P(item.E),item.Th,item.Phi);
+			P+=direction(item.Phi,item.Th)*item.particle.E2P(item.E);
 		CachePBeam(P.M());
 		return true;
 	}
