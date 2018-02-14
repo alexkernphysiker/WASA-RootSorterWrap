@@ -110,7 +110,10 @@ public:
 			std::ofstream file;
 			file.open((DataFiles+m_name+".simulation.txt").c_str(),ios_base::app);
 			if(file){
-				for(const ParamSet&p:*data)file<<p<<std::endl;
+				for(const ParamSet&p:*data){
+					for(const double&c:p)file<<c<<" ";
+					file<<std::endl;
+				}
 				file.close();
 			}
 		}
@@ -118,11 +121,11 @@ public:
 	double operator()(Args... args)const{
 		using namespace Genetic;
 		ParamSet X;
-		for(FUNC f:Experiment)X<<f(args...);
+		for(FUNC f:Experiment)X.push_back(f(args...));
 		if(P.size()>0){
 			return m_func(X,P);
 		}else{
-			X<<Theory(args...);
+			X.push_back(Theory(args...));
 			data->push_back(X);			
 			return INFINITY;
 		}
