@@ -27,6 +27,9 @@ Analysis::Analysis(){
 	for(size_t i=0;i<33;i++)
 		m_triggers.push_back(trig_rec());
 }
+FDFTHTracks&Analysis::FinderFD()const{return *TrackFinderFD;}
+CDTracksSimple&Analysis::FinderCD()const{return *CDTrackFinder;}                                                             
+
 Analysis::~Analysis(){}
 Analysis::trig_rec& Analysis::Trigger(size_t n){
 	if(n>=m_triggers.size())
@@ -77,6 +80,3 @@ void Analysis::CacheVertex(const vector<Kinematic>& item) const{
 	for(const auto&i:item)
 		m_cache->vertex_cache[m_cache->vertex_cache.size()-1].push_back(i);
 }
-
-
-

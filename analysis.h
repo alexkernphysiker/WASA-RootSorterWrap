@@ -44,6 +44,8 @@ public:
 	struct Kinematic{Particle particle;double E,Th,Phi;};
 	const std::vector<Kinematic>&Vertex(const size_t index)const;
 	double PBeam()const;
+	FDFTHTracks&FinderFD()const;
+	CDTracksSimple&FinderCD()const;
 protected:
 	virtual bool DataTypeSpecificEventAnalysis()const=0;
 	virtual bool DataSpecificTriggerCheck(int n)const=0;
