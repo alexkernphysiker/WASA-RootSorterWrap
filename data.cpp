@@ -6,8 +6,8 @@
 #include "reconstruction.h"
 using namespace std;
 const double pbeam_measurement_offset=0.0046;
-RealData::RealData()
-:BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;}){
+RealData::RealData(bool weak=false):m_trigger_weak(weak),
+    BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;}){
 	fHeader = dynamic_cast<REventHeader*>(gDataManager->GetDataObject("REventHeader","Header"));
 }
 RealData::~RealData(){}
@@ -16,6 +16,7 @@ bool RealData::DataTypeSpecificEventAnalysis()const{
 	return true;
 }
 bool RealData::DataSpecificTriggerCheck(int n)const{
+        if(m_trigger_weak)return true;
 	if(0==n)return true;
 	return fHeader->TriggerNumSet(n);
 }
