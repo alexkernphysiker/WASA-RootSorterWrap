@@ -45,7 +45,7 @@ void Analysis::ProcessEvent(){
 			trig.push_back(DataSpecificTriggerCheck(i));
 		for(size_t i=0;i<m_triggers.size();i++)
 			if(trig[i])
-				trig[i]=m_triggers[i].pre().Process();
+				m_triggers[i].pre().Process();
 		vector<WTrackBank*> BANK;
 		BANK.push_back(fTrackBankCD);
 		BANK.push_back(fTrackBankFD);
