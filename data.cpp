@@ -12,7 +12,7 @@ RealData::RealData(bool weak):m_trigger_weak(weak),
 }
 RealData::~RealData(){}
 bool RealData::DataTypeSpecificEventAnalysis()const{
-	CachePBeam((BeamMomenta()/1000.0)+getParameter(0));
+	CachePBeam((BeamMomenta()/1000.0)+getParameter(pbeam_corr));
 	return true;
 }
 bool RealData::DataSpecificTriggerCheck(int n)const{
