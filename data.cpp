@@ -2,17 +2,17 @@
 // GPL license
 #include <fstream>
 #include <exception>
+#include <Parameters/parameters.h>
 #include "data.h"
 #include "reconstruction.h"
 using namespace std;
-const double pbeam_measurement_offset=0.0046;
 RealData::RealData(bool weak):m_trigger_weak(weak),
     BeamMomenta("Time.2.PBeam",[this](){return 1000.0*fHeader->GetTimeInCycle();},[](){return INFINITY;}){
 	fHeader = dynamic_cast<REventHeader*>(gDataManager->GetDataObject("REventHeader","Header"));
 }
 RealData::~RealData(){}
 bool RealData::DataTypeSpecificEventAnalysis()const{
-	CachePBeam((BeamMomenta()/1000.0)+pbeam_measurement_offset);
+	CachePBeam((BeamMomenta()/1000.0)+getParameter(0));
 	return true;
 }
 bool RealData::DataSpecificTriggerCheck(int n)const{
